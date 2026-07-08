@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Models\Server;
 use App\Services\Plugin\HookManager;
 
 abstract class AbstractProtocol
@@ -47,6 +48,16 @@ abstract class AbstractProtocol
     protected $allowedProtocols = [];
 
     /**
+     * 运营商优选 VLESS CDN 入口。
+     *
+     * 仅用于订阅输出层复制普通 TLS VLESS CDN 节点，Reality / Hysteria / 直连 TCP 不参与。
+     */
+    private const CARRIER_PREFERRED_VLESS_SERVERS = [
+        '联通优选网' => 'uniq.minghsui.com',
+        '移动优选网' => 'cmcc.minghsui.com',
+    ];
+
+    /**
      * 构造函数
      *
      * @param array $user 用户信息
@@ -63,7 +74,8 @@ abstract class AbstractProtocol
         $this->clientVersion = $clientVersion;
         $this->userAgent = $userAgent;
         $this->protocolRequirements = $this->normalizeProtocolRequirements($this->protocolRequirements);
-        $this->servers = HookManager::filter('protocol.servers.filtered', $this->filterServersByVersion());
+        $filteredServers = HookManager::filter('protocol.servers.filtered', $this->filterServersByVersion());
+        $this->servers = $this->expandCarrierPreferredVlessServers($filteredServers);
     }
 
     /**
@@ -237,6 +249,79 @@ abstract class AbstractProtocol
                 ->values()
                 ->all();
         }
+    }
+
+    /**
+     * 为普通 TLS VLESS CDN 节点自动增加运营商优选入口。
+     *
+     * 这个处理放在 AbstractProtocol 层，因此 ClashMeta、General、SingBox 等所有订阅输出都会自动继承。
+     * 原始节点的 TLS SNI、WS Host、gRPC serviceName、path、uuid、port 等配置保持不变，只替换连接入口 host。
+     */
+    protected function expandCarrierPreferredVlessServers(array $servers): array
+    {
+        $expanded = [];
+
+        foreach ($servers as $server) {
+            $expanded[] = $server;
+
+            if (!$this->shouldExpandCarrierPreferredVless($server)) {
+                continue;
+            }
+
+            $baseName = $this->carrierPreferredBaseName($server['name'] ?? 'VLESS');
+
+            foreach (self::CARRIER_PREFERRED_VLESS_SERVERS as $suffix => $host) {
+                $clone = $server;
+                $clone['name'] = $baseName . '|' . $suffix;
+                $clone['host'] = $host;
+                $expanded[] = $clone;
+            }
+        }
+
+        return $expanded;
+    }
+
+    /**
+     * 只扩展普通 TLS VLESS CDN 传输；Reality、Hysteria、已是优选入口的节点都跳过。
+     */
+    protected function shouldExpandCarrierPreferredVless(array $server): bool
+    {
+        if (($server['type'] ?? null) !== Server::TYPE_VLESS) {
+            return false;
+        }
+
+        $name = (string) ($server['name'] ?? '');
+        if (str_contains($name, '联通优选网') || str_contains($name, '移动优选网')) {
+            return false;
+        }
+
+        $host = strtolower((string) ($server['host'] ?? ''));
+        if ($host === '' || in_array($host, array_map('strtolower', array_values(self::CARRIER_PREFERRED_VLESS_SERVERS)), true)) {
+            return false;
+        }
+
+        $protocolSettings = data_get($server, 'protocol_settings', []);
+        $tlsMode = (int) data_get($protocolSettings, 'tls', 0);
+        if ($tlsMode !== 1) {
+            return false;
+        }
+
+        // Vision/Reality 类节点不做 CDN 优选扩展。
+        if (data_get($protocolSettings, 'flow')) {
+            return false;
+        }
+
+        $network = data_get($protocolSettings, 'network');
+        return in_array($network, ['ws', 'grpc', 'h2', 'http', 'httpupgrade', 'xhttp'], true);
+    }
+
+    protected function carrierPreferredBaseName(string $name): string
+    {
+        $name = str_replace(' ', '|', $name);
+        $name = str_replace(['联通优选网', '移动优选网', '联通', '移动'], '', $name);
+        $name = preg_replace('/[|｜\s]+$/u', '', trim($name));
+
+        return $name !== '' ? $name : 'VLESS';
     }
 
     /**
