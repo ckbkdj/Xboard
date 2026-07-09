@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Models\Server;
 use App\Services\Plugin\HookManager;
 
 abstract class AbstractProtocol
@@ -55,6 +56,11 @@ abstract class AbstractProtocol
         '联通优选网' => 'uniq.minghsui.com',
         '移动优选网' => 'cmcc.minghsui.com',
     ];
+
+    /**
+     * 存在主节点 network_settings 内部，给优选订阅项保存稳定 path，不输出给客户端或节点端。
+     */
+    private const CARRIER_PREFERRED_META_KEY = '_carrier_preferred';
 
     /**
      * 构造函数
@@ -270,7 +276,7 @@ abstract class AbstractProtocol
      * 为普通 TLS VLESS CDN 节点自动增加运营商优选入口。
      *
      * 这个处理放在 AbstractProtocol 层，因此 ClashMeta、General、SingBox 等所有订阅输出都会自动继承。
-     * 原始节点的 TLS SNI、WS Host、gRPC serviceName、path、uuid、port 等配置保持不变，只替换连接入口 host。
+     * 优选入口会使用自己的稳定随机 path；不会复用主节点 path。
      */
     protected function expandCarrierPreferredVlessServers(array $servers): array
     {
@@ -286,7 +292,7 @@ abstract class AbstractProtocol
             $baseName = $this->carrierPreferredBaseName((string) ($server['name'] ?? 'VLESS'));
 
             foreach (self::CARRIER_PREFERRED_VLESS_SERVERS as $suffix => $host) {
-                $clone = $server;
+                $clone = $this->buildCarrierPreferredVlessClone($server, $suffix, $host);
                 $clone['name'] = $baseName . '|' . $suffix;
                 $clone['host'] = $host;
                 $expanded[] = $clone;
@@ -337,6 +343,245 @@ abstract class AbstractProtocol
         $name = preg_replace('/[|｜\s]+$/u', '', trim($name));
 
         return $name !== '' ? $name : 'VLESS';
+    }
+
+    protected function buildCarrierPreferredVlessClone(array $server, string $suffix, string $preferredHost): array
+    {
+        $clone = $server;
+        $protocolSettings = data_get($clone, 'protocol_settings', []);
+        if (!is_array($protocolSettings)) {
+            return $clone;
+        }
+
+        $network = data_get($protocolSettings, 'network');
+        if (!in_array($network, ['ws', 'httpupgrade'], true)) {
+            return $clone;
+        }
+
+        $networkSettings = data_get($protocolSettings, 'network_settings', []);
+        if (!is_array($networkSettings)) {
+            $networkSettings = [];
+        }
+
+        $realHost = $this->resolveCarrierPreferredRealHost($server, $protocolSettings);
+        $preferredPath = $this->resolveCarrierPreferredPath(
+            $server,
+            $suffix,
+            $preferredHost,
+            $protocolSettings,
+            $networkSettings,
+            $realHost
+        );
+
+        $networkSettings = $this->stripCarrierPreferredMeta($networkSettings);
+        if ($network === 'httpupgrade') {
+            $networkSettings['acceptProxyProtocol'] = (bool) data_get($networkSettings, 'acceptProxyProtocol', false);
+            $networkSettings['path'] = $preferredPath;
+            $networkSettings['host'] = $realHost;
+        }
+
+        if ($network === 'ws') {
+            $headers = data_get($networkSettings, 'headers', []);
+            if (!is_array($headers)) {
+                $headers = [];
+            }
+            $headers['Host'] = $realHost;
+            $networkSettings['path'] = $preferredPath;
+            $networkSettings['headers'] = $headers;
+        }
+
+        $clone['protocol_settings']['network_settings'] = $networkSettings;
+
+        return $clone;
+    }
+
+    protected function resolveCarrierPreferredPath(
+        array $server,
+        string $suffix,
+        string $preferredHost,
+        array $protocolSettings,
+        array $networkSettings,
+        string $realHost
+    ): string {
+        $key = $this->carrierPreferredKey($preferredHost);
+        $sourceSignature = $this->carrierPreferredSourceSignature($server, $protocolSettings, $networkSettings, $realHost);
+        $mainPath = data_get($networkSettings, 'path');
+        $storedNetworkSettings = $this->loadCarrierPreferredStoredNetworkSettings($server, $networkSettings);
+        $metaMap = $storedNetworkSettings[self::CARRIER_PREFERRED_META_KEY] ?? [];
+        $meta = is_array($metaMap) ? ($metaMap[$key] ?? []) : [];
+        $path = is_array($meta) ? ($meta['path'] ?? null) : null;
+
+        $needsRefresh = !is_array($meta)
+            || !$this->isStableHttpTransportPath($path)
+            || ($this->isStableHttpTransportPath($mainPath) && $path === $mainPath)
+            || (($meta['source_signature'] ?? null) !== $sourceSignature)
+            || (($meta['host'] ?? null) !== $preferredHost);
+
+        if ($needsRefresh) {
+            $path = $this->generateHttpTransportPath($mainPath);
+            $meta = [
+                'suffix' => $suffix,
+                'host' => $preferredHost,
+                'path' => $path,
+                'real_host' => $realHost,
+                'source_signature' => $sourceSignature,
+                'updated_at' => time(),
+            ];
+            $this->persistCarrierPreferredMeta($server, $key, $meta, $storedNetworkSettings);
+        }
+
+        return $path;
+    }
+
+    protected function loadCarrierPreferredStoredNetworkSettings(array $server, array $fallbackNetworkSettings): array
+    {
+        $id = $server['id'] ?? null;
+        if (!$id) {
+            return $fallbackNetworkSettings;
+        }
+
+        try {
+            $model = Server::query()->find($id);
+            if (!$model) {
+                return $fallbackNetworkSettings;
+            }
+
+            $networkSettings = data_get($model->protocol_settings, 'network_settings', []);
+            return is_array($networkSettings) ? $networkSettings : $fallbackNetworkSettings;
+        } catch (\Throwable $e) {
+            if (function_exists('report')) {
+                report($e);
+            }
+            return $fallbackNetworkSettings;
+        }
+    }
+
+    protected function persistCarrierPreferredMeta(array $server, string $key, array $meta, array $storedNetworkSettings): void
+    {
+        $id = $server['id'] ?? null;
+        if (!$id) {
+            return;
+        }
+
+        try {
+            $model = Server::query()->find($id);
+            if (!$model) {
+                return;
+            }
+
+            $protocolSettings = $model->protocol_settings;
+            if (!is_array($protocolSettings)) {
+                $protocolSettings = [];
+            }
+
+            $networkSettings = data_get($protocolSettings, 'network_settings', []);
+            if (!is_array($networkSettings)) {
+                $networkSettings = $storedNetworkSettings;
+            }
+
+            $metaMap = $networkSettings[self::CARRIER_PREFERRED_META_KEY] ?? [];
+            if (!is_array($metaMap)) {
+                $metaMap = [];
+            }
+
+            if (($metaMap[$key] ?? null) === $meta) {
+                return;
+            }
+
+            $metaMap[$key] = $meta;
+            $networkSettings[self::CARRIER_PREFERRED_META_KEY] = $metaMap;
+            $protocolSettings['network_settings'] = $networkSettings;
+
+            $model->protocol_settings = $protocolSettings;
+            $model->saveQuietly();
+        } catch (\Throwable $e) {
+            if (function_exists('report')) {
+                report($e);
+            }
+        }
+    }
+
+    protected function carrierPreferredSourceSignature(array $server, array $protocolSettings, array $networkSettings, string $realHost): string
+    {
+        $payload = [
+            'id' => $server['id'] ?? null,
+            'type' => $server['type'] ?? null,
+            'host' => $server['host'] ?? null,
+            'network' => data_get($protocolSettings, 'network'),
+            'tls' => data_get($protocolSettings, 'tls'),
+            'real_host' => $realHost,
+            'network_settings' => $this->stripCarrierPreferredMeta($networkSettings),
+            'tls_settings' => data_get($protocolSettings, 'tls_settings'),
+        ];
+
+        return hash('sha256', json_encode($this->recursiveKeySort($payload), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
+
+    protected function carrierPreferredKey(string $preferredHost): string
+    {
+        return hash('sha1', strtolower($preferredHost));
+    }
+
+    protected function resolveCarrierPreferredRealHost(array $server, array $protocolSettings): string
+    {
+        $host = data_get($protocolSettings, 'tls_settings.server_name')
+            ?: data_get($protocolSettings, 'server_name')
+            ?: ($server['host'] ?? '');
+
+        return trim((string) $host);
+    }
+
+    protected function stripCarrierPreferredMeta(array $networkSettings): array
+    {
+        unset($networkSettings[self::CARRIER_PREFERRED_META_KEY]);
+        return $networkSettings;
+    }
+
+    protected function isStableHttpTransportPath(mixed $path): bool
+    {
+        if (!is_string($path)) {
+            return false;
+        }
+
+        $path = trim($path);
+        if ($path === '' || $path === '/') {
+            return false;
+        }
+
+        return str_starts_with($path, '/') && !preg_match('/[\s?#]/', $path);
+    }
+
+    protected function generateHttpTransportPath(mixed $avoidPath = null): string
+    {
+        $avoidPath = is_string($avoidPath) ? $avoidPath : null;
+
+        for ($i = 0; $i < 5; $i++) {
+            try {
+                $path = '/lv-' . bin2hex(random_bytes(5));
+            } catch (\Throwable) {
+                $path = '/lv-' . strtolower(str_replace('.', '', uniqid('', true)));
+            }
+
+            if ($path !== $avoidPath) {
+                return $path;
+            }
+        }
+
+        return '/lv-' . strtolower(str_replace('.', '', uniqid('', true)));
+    }
+
+    protected function recursiveKeySort(mixed $value): mixed
+    {
+        if (!is_array($value)) {
+            return $value;
+        }
+
+        foreach ($value as $key => $item) {
+            $value[$key] = $this->recursiveKeySort($item);
+        }
+
+        ksort($value);
+        return $value;
     }
 
     /**
