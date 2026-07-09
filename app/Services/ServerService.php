@@ -264,7 +264,7 @@ class ServerService
             'listen_ip' => '0.0.0.0',
             'server_port' => (int) $serverPort,
             'network' => data_get($protocolSettings, 'network'),
-            'networkSettings' => data_get($protocolSettings, 'network_settings') ?: null,
+            'networkSettings' => self::stripInternalNetworkSettings(data_get($protocolSettings, 'network_settings') ?: null),
         ];
 
         $response = match ($nodeType) {
@@ -401,10 +401,10 @@ class ServerService
     }
 
     /**
-     * WS / HTTPUpgrade 必须共用稳定的随机 path，并把 Host 固定为真实域名。
+     * WS / HTTPUpgrade 主节点使用稳定 path，并把 Host 固定为真实域名。
      *
      * 首次拉取订阅或节点配置时，如果主节点没有有效 path，会自动生成并保存到主节点。
-     * 后续订阅直接复用保存值；优选入口只复制主节点设置，不会每次重新随机。
+     * 后续订阅直接复用保存值；优选入口在 AbstractProtocol 层拥有自己的稳定随机 path。
      */
     private static function normalizeHttpTransportSettings(Server $node): Server
     {
@@ -456,6 +456,16 @@ class ServerService
         }
 
         return $node;
+    }
+
+    private static function stripInternalNetworkSettings(mixed $settings): ?array
+    {
+        if (!is_array($settings)) {
+            return null;
+        }
+
+        unset($settings['_carrier_preferred']);
+        return $settings ?: null;
     }
 
     private static function isStableHttpTransportPath(mixed $path): bool
