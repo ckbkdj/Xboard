@@ -150,7 +150,7 @@ class ServerService
     {
         $service = app(DeviceStateService::class);
         foreach ($alive as $uid => $ips) {
-            $service->setDevices((int) $uid, (array) $ips);
+            $service->setDevices((int) $uid, $nodeId, (array) $ips);
         }
     }
 
