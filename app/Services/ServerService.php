@@ -66,6 +66,8 @@ class ServerService
             ->append(['last_check_at', 'last_push_at', 'online', 'is_online', 'available_status', 'cache_key', 'server_key']);
 
         $servers = collect($servers)->map(function ($server) use ($user) {
+            $server = self::normalizeHttpTransportSettings($server);
+
             // 判断动态端口
             if (str_contains($server->port, '-')) {
                 $port = $server->port;
@@ -148,7 +150,7 @@ class ServerService
     {
         $service = app(DeviceStateService::class);
         foreach ($alive as $uid => $ips) {
-            $service->setDevices((int) $uid, $nodeId, (array) $ips);
+            $service->setDevices((int) $uid, (array) $ips);
         }
     }
 
@@ -250,6 +252,8 @@ class ServerService
 
     public static function buildNodeConfig(Server $node): array
     {
+        $node = self::normalizeHttpTransportSettings($node);
+
         $nodeType = $node->type;
         $protocolSettings = $node->protocol_settings;
         $serverPort = $node->server_port;
@@ -394,6 +398,96 @@ class ServerService
         }
 
         return $response;
+    }
+
+    /**
+     * WS / HTTPUpgrade 必须共用稳定的随机 path，并把 Host 固定为真实域名。
+     *
+     * 首次拉取订阅或节点配置时，如果主节点没有有效 path，会自动生成并保存到主节点。
+     * 后续订阅直接复用保存值；优选入口只复制主节点设置，不会每次重新随机。
+     */
+    private static function normalizeHttpTransportSettings(Server $node): Server
+    {
+        if (!in_array($node->type, [Server::TYPE_VLESS, Server::TYPE_VMESS, Server::TYPE_TROJAN], true)) {
+            return $node;
+        }
+
+        $protocolSettings = $node->protocol_settings;
+        $network = data_get($protocolSettings, 'network');
+        if (!in_array($network, ['ws', 'httpupgrade'], true)) {
+            return $node;
+        }
+
+        $networkSettings = data_get($protocolSettings, 'network_settings', []);
+        if (!is_array($networkSettings)) {
+            $networkSettings = [];
+        }
+
+        $path = data_get($networkSettings, 'path');
+        if (!self::isStableHttpTransportPath($path)) {
+            $path = self::generateHttpTransportPath();
+        }
+
+        $realHost = self::resolveHttpTransportHost($node, $protocolSettings);
+        $normalizedNetworkSettings = $networkSettings;
+
+        if ($network === 'httpupgrade') {
+            $normalizedNetworkSettings['acceptProxyProtocol'] = (bool) data_get($networkSettings, 'acceptProxyProtocol', false);
+            $normalizedNetworkSettings['path'] = $path;
+            $normalizedNetworkSettings['host'] = $realHost;
+        }
+
+        if ($network === 'ws') {
+            $headers = data_get($networkSettings, 'headers', []);
+            if (!is_array($headers)) {
+                $headers = [];
+            }
+            $headers['Host'] = $realHost;
+
+            $normalizedNetworkSettings['path'] = $path;
+            $normalizedNetworkSettings['headers'] = $headers;
+        }
+
+        if ($normalizedNetworkSettings !== $networkSettings) {
+            $protocolSettings['network_settings'] = $normalizedNetworkSettings;
+            $node->protocol_settings = $protocolSettings;
+            $node->saveQuietly();
+            $node->setAttribute('protocol_settings', $node->protocol_settings);
+        }
+
+        return $node;
+    }
+
+    private static function isStableHttpTransportPath(mixed $path): bool
+    {
+        if (!is_string($path)) {
+            return false;
+        }
+
+        $path = trim($path);
+        if ($path === '' || $path === '/') {
+            return false;
+        }
+
+        return str_starts_with($path, '/') && !preg_match('/[\s?#]/', $path);
+    }
+
+    private static function generateHttpTransportPath(): string
+    {
+        try {
+            return '/lv-' . bin2hex(random_bytes(5));
+        } catch (\Throwable) {
+            return '/lv-' . strtolower(str_replace('.', '', uniqid('', true)));
+        }
+    }
+
+    private static function resolveHttpTransportHost(Server $node, array $protocolSettings): string
+    {
+        $host = data_get($protocolSettings, 'tls_settings.server_name')
+            ?: data_get($protocolSettings, 'server_name')
+            ?: $node->host;
+
+        return trim((string) $host);
     }
 
     /**
