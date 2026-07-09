@@ -2,7 +2,6 @@
 
 namespace App\Support;
 
-use App\Models\Server;
 use App\Services\Plugin\HookManager;
 
 abstract class AbstractProtocol
@@ -74,8 +73,24 @@ abstract class AbstractProtocol
         $this->clientVersion = $clientVersion;
         $this->userAgent = $userAgent;
         $this->protocolRequirements = $this->normalizeProtocolRequirements($this->protocolRequirements);
+
         $filteredServers = HookManager::filter('protocol.servers.filtered', $this->filterServersByVersion());
-        $this->servers = $this->expandCarrierPreferredVlessServers($filteredServers);
+        if ($filteredServers instanceof \Illuminate\Support\Collection) {
+            $filteredServers = $filteredServers->values()->all();
+        }
+        if (!is_array($filteredServers)) {
+            $filteredServers = is_array($this->servers) ? $this->servers : [];
+        }
+
+        // 运营商优选扩展只允许“增量复制节点”，任何异常都必须回退到原始节点列表，避免订阅/节点全空。
+        try {
+            $this->servers = $this->expandCarrierPreferredVlessServers($filteredServers);
+        } catch (\Throwable $e) {
+            if (function_exists('report')) {
+                report($e);
+            }
+            $this->servers = $filteredServers;
+        }
     }
 
     /**
@@ -264,11 +279,11 @@ abstract class AbstractProtocol
         foreach ($servers as $server) {
             $expanded[] = $server;
 
-            if (!$this->shouldExpandCarrierPreferredVless($server)) {
+            if (!is_array($server) || !$this->shouldExpandCarrierPreferredVless($server)) {
                 continue;
             }
 
-            $baseName = $this->carrierPreferredBaseName($server['name'] ?? 'VLESS');
+            $baseName = $this->carrierPreferredBaseName((string) ($server['name'] ?? 'VLESS'));
 
             foreach (self::CARRIER_PREFERRED_VLESS_SERVERS as $suffix => $host) {
                 $clone = $server;
@@ -286,7 +301,7 @@ abstract class AbstractProtocol
      */
     protected function shouldExpandCarrierPreferredVless(array $server): bool
     {
-        if (($server['type'] ?? null) !== Server::TYPE_VLESS) {
+        if (($server['type'] ?? null) !== 'vless') {
             return false;
         }
 
