@@ -73,7 +73,6 @@ jobs:
             echo 'tags<<EOF'
             echo "${tags}"
             echo 'EOF'
-            echo "cachebust=${GITHUB_SHA}"
           } >> "${GITHUB_OUTPUT}"
 
       - name: Build and push image
@@ -82,36 +81,28 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile
+          file: ./Dockerfile.custom
           platforms: linux/amd64
           push: true
           pull: true
           provenance: false
           tags: ${{ steps.vars.outputs.tags }}
-          build-args: |
-            REPO_URL=https://github.com/ckbkdj/Xboard
-            BRANCH_NAME=custom-subscribe
-            CACHEBUST=${{ steps.vars.outputs.cachebust }}
-          cache-from: type=gha,scope=xboard-custom
-          cache-to: type=gha,mode=max,scope=xboard-custom
+          cache-from: type=gha,scope=xboard-custom-overlay
+          cache-to: type=gha,mode=max,scope=xboard-custom-overlay
 
       - name: Retry build after transient network failure
         if: steps.build.outcome == 'failure'
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile
+          file: ./Dockerfile.custom
           platforms: linux/amd64
           push: true
           pull: true
           provenance: false
           tags: ${{ steps.vars.outputs.tags }}
-          build-args: |
-            REPO_URL=https://github.com/ckbkdj/Xboard
-            BRANCH_NAME=custom-subscribe
-            CACHEBUST=${{ steps.vars.outputs.cachebust }}
-          cache-from: type=gha,scope=xboard-custom
-          cache-to: type=gha,mode=max,scope=xboard-custom
+          cache-from: type=gha,scope=xboard-custom-overlay
+          cache-to: type=gha,mode=max,scope=xboard-custom-overlay
 
       - name: Write build summary
         if: success()
