@@ -7,9 +7,11 @@ COPY app/Services/ServerService.php /www/app/Services/ServerService.php
 COPY resources/rules/default.clash.yaml /www/resources/rules/default.clash.yaml
 COPY .docker/entrypoint.sh /entrypoint.sh
 COPY scripts/patch-carrier-preferred.php /tmp/patch-carrier-preferred.php
+COPY scripts/test-carrier-preferred.php /tmp/test-carrier-preferred.php
 
 RUN php /tmp/patch-carrier-preferred.php /www/app/Support/AbstractProtocol.php && \
     php -l /www/app/Support/AbstractProtocol.php && \
     php -l /www/app/Services/ServerService.php && \
+    php /tmp/test-carrier-preferred.php && \
     chmod +x /entrypoint.sh && \
-    rm -f /tmp/patch-carrier-preferred.php
+    rm -f /tmp/patch-carrier-preferred.php /tmp/test-carrier-preferred.php
