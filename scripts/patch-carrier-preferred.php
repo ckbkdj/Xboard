@@ -43,6 +43,58 @@ $replaceExact(
 );
 
 $replaceExact(
+    "        foreach (\$servers as \$server) {\n" .
+    "            \$expanded[] = \$server;\n\n" .
+    "            if (!is_array(\$server) || !\$this->shouldExpandCarrierPreferredVless(\$server)) {\n" .
+    "                continue;\n" .
+    "            }",
+    "        foreach (\$servers as \$server) {\n" .
+    "            if (!is_array(\$server)) {\n" .
+    "                \$expanded[] = \$server;\n" .
+    "                continue;\n" .
+    "            }\n\n" .
+    "            // 面板若误把主节点地址填成某个优选域名，则使用 TLS SNI 恢复真实原始域名。\n" .
+    "            \$server = \$this->normalizeCarrierPreferredSourceServer(\$server);\n" .
+    "            \$expanded[] = \$server;\n\n" .
+    "            if (!\$this->shouldExpandCarrierPreferredVless(\$server)) {\n" .
+    "                continue;\n" .
+    "            }",
+    'carrier source normalization'
+);
+
+$replaceExact(
+    "    /**\n" .
+    "     * 只扩展普通 TLS VLESS CDN 传输；Reality、Hysteria、已是优选入口的节点都跳过。\n" .
+    "     */\n" .
+    "    protected function shouldExpandCarrierPreferredVless(array \$server): bool",
+    "    /**\n" .
+    "     * 如果数据库中的主节点 host 已经被填成优选域名，则从 TLS SNI 恢复真实入口。\n" .
+    "     */\n" .
+    "    protected function normalizeCarrierPreferredSourceServer(array \$server): array\n" .
+    "    {\n" .
+    "        \$preferredHosts = array_map('strtolower', array_values(self::CARRIER_PREFERRED_VLESS_SERVERS));\n" .
+    "        \$currentHost = strtolower(trim((string) (\$server['host'] ?? '')));\n" .
+    "        if (!in_array(\$currentHost, \$preferredHosts, true)) {\n" .
+    "            return \$server;\n" .
+    "        }\n\n" .
+    "        \$protocolSettings = data_get(\$server, 'protocol_settings', []);\n" .
+    "        if (!is_array(\$protocolSettings)) {\n" .
+    "            return \$server;\n" .
+    "        }\n\n" .
+    "        \$realHost = \$this->resolveCarrierPreferredRealHost(\$server, \$protocolSettings);\n" .
+    "        if (\$realHost !== '' && !in_array(strtolower(\$realHost), \$preferredHosts, true)) {\n" .
+    "            \$server['host'] = \$realHost;\n" .
+    "        }\n\n" .
+    "        return \$server;\n" .
+    "    }\n\n" .
+    "    /**\n" .
+    "     * 只扩展普通 TLS VLESS CDN 传输；Reality、Hysteria、已是优选入口的节点都跳过。\n" .
+    "     */\n" .
+    "    protected function shouldExpandCarrierPreferredVless(array \$server): bool",
+    'carrier source helper'
+);
+
+$replaceExact(
     "        if (str_contains(\$name, '联通优选网') || str_contains(\$name, '移动优选网')) {",
     "        if (str_contains(\$name, '联通优选网') || str_contains(\$name, '移动优选网') || str_contains(\$name, '电信优选网')) {",
     'carrier duplicate guard'
@@ -112,4 +164,4 @@ if (file_put_contents($target, $content) === false) {
     exit(1);
 }
 
-echo "Patched carrier preferred entries: Unicom, Mobile, Telecom; shared original transport path.\n";
+echo "Patched carrier preferred entries: origin + Unicom + Mobile + Telecom; shared original transport path.\n";
