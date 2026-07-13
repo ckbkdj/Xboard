@@ -15,6 +15,7 @@ RUN CFLAGS="-O0" install-php-extensions pcntl && \
 WORKDIR /www
 
 COPY .docker /
+COPY scripts/patch-carrier-preferred.php /tmp/patch-carrier-preferred.php
 
 # Add build arguments
 ARG CACHEBUST=1
@@ -27,6 +28,11 @@ RUN echo "Attempting to clone branch: ${BRANCH_NAME} from ${REPO_URL} with CACHE
     git config --global --add safe.directory /www && \
     git clone --depth 1 --branch ${BRANCH_NAME} ${REPO_URL} . && \
     git submodule update --init --recursive --force
+
+# Apply the fixed custom subscription behavior after cloning the selected branch.
+RUN php /tmp/patch-carrier-preferred.php /www/app/Support/AbstractProtocol.php && \
+    php -l /www/app/Support/AbstractProtocol.php && \
+    rm -f /tmp/patch-carrier-preferred.php
 
 COPY .docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY .docker/caddy/Caddyfile /etc/caddy/Caddyfile
@@ -49,4 +55,4 @@ EXPOSE 7001
 COPY .docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"] 
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
