@@ -1,0 +1,126 @@
+name: Build Custom Xboard Image
+
+on:
+  push:
+    branches:
+      - custom-subscribe
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Optional immutable tag, for example custom-v1.0.0"
+        required: false
+        default: ""
+        type: string
+
+concurrency:
+  group: xboard-custom-image-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ckbkdj/xboard
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: custom-subscribe
+          fetch-depth: 1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prepare image tags
+        id: vars
+        shell: bash
+        env:
+          VERSION_INPUT: ${{ inputs.version || '' }}
+        run: |
+          set -euo pipefail
+
+          image="${REGISTRY}/${IMAGE_NAME}"
+          short_sha="${GITHUB_SHA::12}"
+
+          tags="${image}:custom-latest"
+          tags+=$'\n'"${image}:custom-${short_sha}"
+
+          if [[ -n "${VERSION_INPUT}" ]]; then
+            if [[ ! "${VERSION_INPUT}" =~ ^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$ ]]; then
+              echo "Invalid version tag: ${VERSION_INPUT}" >&2
+              exit 1
+            fi
+            tags+=$'\n'"${image}:${VERSION_INPUT}"
+          fi
+
+          {
+            echo 'tags<<EOF'
+            echo "${tags}"
+            echo 'EOF'
+            echo "cachebust=${GITHUB_SHA}"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Build and push image
+        id: build
+        continue-on-error: true
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          pull: true
+          provenance: false
+          tags: ${{ steps.vars.outputs.tags }}
+          build-args: |
+            REPO_URL=https://github.com/ckbkdj/Xboard
+            BRANCH_NAME=custom-subscribe
+            CACHEBUST=${{ steps.vars.outputs.cachebust }}
+          cache-from: type=gha,scope=xboard-custom
+          cache-to: type=gha,mode=max,scope=xboard-custom
+
+      - name: Retry build after transient network failure
+        if: steps.build.outcome == 'failure'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          pull: true
+          provenance: false
+          tags: ${{ steps.vars.outputs.tags }}
+          build-args: |
+            REPO_URL=https://github.com/ckbkdj/Xboard
+            BRANCH_NAME=custom-subscribe
+            CACHEBUST=${{ steps.vars.outputs.cachebust }}
+          cache-from: type=gha,scope=xboard-custom
+          cache-to: type=gha,mode=max,scope=xboard-custom
+
+      - name: Write build summary
+        if: success()
+        shell: bash
+        run: |
+          {
+            echo '## Xboard image published'
+            echo
+            echo '```text'
+            echo '${{ steps.vars.outputs.tags }}'
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"
