@@ -270,7 +270,7 @@ $content = $replaceRegex(
       ].some((word) => text.includes(word));
 
       if (controls >= 2 && (hasNodeName || hasEditorHeading)) {
-        fallback = current;
+        fallback ||= current;
         if (current.matches("[role='dialog'], form, [data-state='open']")) {
           return current;
         }
