@@ -7,6 +7,7 @@ on:
     paths-ignore:
       - "**/*.md"
       - "docs/**"
+      - "ci-failures/**"
   workflow_dispatch:
     inputs:
       version:
@@ -27,7 +28,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
       issues: write
 
@@ -118,18 +119,34 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-      - name: Publish failure diagnostics
+      - name: Persist failure diagnostics
         if: steps.build.outputs.status != '0'
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          mkdir -p ci-failures
+          {
+            echo "commit=${GITHUB_SHA}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "run_url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo
+            tail -n 300 build.log
+          } > ci-failures/latest.log
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ci-failures/latest.log
+          git commit -m "ci: save Docker build failure log [skip ci]"
+          git push origin HEAD:custom-subscribe
+
           {
             echo "## Automatic Docker build failure"
             echo
             echo "- Commit: \`${GITHUB_SHA}\`"
             echo "- Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "- Log: \`ci-failures/latest.log\`"
             echo
             echo "### Last 220 log lines"
             echo '```text'
@@ -140,7 +157,7 @@ jobs:
           gh issue create \
             --repo "${GITHUB_REPOSITORY}" \
             --title "Docker build failed: ${GITHUB_SHA::12}" \
-            --body-file failure.md
+            --body-file failure.md || true
 
           exit 1
 
