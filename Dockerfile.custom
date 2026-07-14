@@ -1,17 +1,36 @@
 FROM ghcr.io/cedar2025/xboard:latest
 
 # Overlay only the files customized by this branch. This avoids rebuilding PHP
-# extensions and Composer dependencies for every subscription logic change.
+# extensions and Composer dependencies for every subscription/admin change.
 COPY app/Support/AbstractProtocol.php /www/app/Support/AbstractProtocol.php
 COPY app/Services/ServerService.php /www/app/Services/ServerService.php
+COPY app/Services/ServerTrafficResetService.php /www/app/Services/ServerTrafficResetService.php
+COPY app/Console/Commands/ResetServerTraffic.php /www/app/Console/Commands/ResetServerTraffic.php
+COPY database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
 COPY resources/rules/default.clash.yaml /www/resources/rules/default.clash.yaml
+COPY public/assets/custom/admin-node-metadata.js /www/public/assets/custom/admin-node-metadata.js
 COPY .docker/entrypoint.sh /entrypoint.sh
 COPY scripts/patch-carrier-preferred.php /tmp/patch-carrier-preferred.php
+COPY scripts/patch-node-admin-metadata.php /tmp/patch-node-admin-metadata.php
 COPY scripts/test-carrier-preferred.php /tmp/test-carrier-preferred.php
+COPY scripts/test-node-admin-metadata.php /tmp/test-node-admin-metadata.php
 
 RUN php /tmp/patch-carrier-preferred.php /www/app/Support/AbstractProtocol.php && \
+    php /tmp/patch-node-admin-metadata.php /www && \
     php -l /www/app/Support/AbstractProtocol.php && \
     php -l /www/app/Services/ServerService.php && \
+    php -l /www/app/Services/ServerTrafficResetService.php && \
+    php -l /www/app/Console/Commands/ResetServerTraffic.php && \
+    php -l /www/app/Models/Server.php && \
+    php -l /www/app/Http/Requests/Admin/ServerSave.php && \
+    php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php && \
+    php -l /www/app/Console/Kernel.php && \
+    php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php && \
     php /tmp/test-carrier-preferred.php && \
+    php /tmp/test-node-admin-metadata.php && \
     chmod +x /entrypoint.sh && \
-    rm -f /tmp/patch-carrier-preferred.php /tmp/test-carrier-preferred.php
+    rm -f \
+      /tmp/patch-carrier-preferred.php \
+      /tmp/patch-node-admin-metadata.php \
+      /tmp/test-carrier-preferred.php \
+      /tmp/test-node-admin-metadata.php
