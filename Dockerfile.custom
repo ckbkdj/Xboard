@@ -15,6 +15,7 @@ RUN set -eux; \
         /tmp/custom-src/app/Support/AbstractProtocol.php; \
     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src; \
     php /tmp/custom-src/scripts/patch-node-admin-ui.php /tmp/custom-src; \
+    php /tmp/custom-src/scripts/patch-node-admin-theme.php /tmp/custom-src; \
     mkdir -p \
         /www/app/Support \
         /www/app/Services \
