@@ -12,11 +12,13 @@ COPY public/assets/custom/admin-node-metadata.js /www/public/assets/custom/admin
 COPY .docker/entrypoint.sh /entrypoint.sh
 COPY scripts/patch-carrier-preferred.php /tmp/patch-carrier-preferred.php
 COPY scripts/patch-node-admin-metadata.php /tmp/patch-node-admin-metadata.php
+COPY scripts/patch-node-admin-ui.php /tmp/patch-node-admin-ui.php
 COPY scripts/test-carrier-preferred.php /tmp/test-carrier-preferred.php
 COPY scripts/test-node-admin-metadata.php /tmp/test-node-admin-metadata.php
 
 RUN php /tmp/patch-carrier-preferred.php /www/app/Support/AbstractProtocol.php && \
     php /tmp/patch-node-admin-metadata.php /www && \
+    php /tmp/patch-node-admin-ui.php /www && \
     php -l /www/app/Support/AbstractProtocol.php && \
     php -l /www/app/Services/ServerService.php && \
     php -l /www/app/Services/ServerTrafficResetService.php && \
@@ -32,5 +34,6 @@ RUN php /tmp/patch-carrier-preferred.php /www/app/Support/AbstractProtocol.php &
     rm -f \
       /tmp/patch-carrier-preferred.php \
       /tmp/patch-node-admin-metadata.php \
+      /tmp/patch-node-admin-ui.php \
       /tmp/test-carrier-preferred.php \
       /tmp/test-node-admin-metadata.php
