@@ -9,8 +9,8 @@
   const state = {
     nodesById: new Map(),
     pendingNodeId: null,
-    scanFrame: 0,
-    decorateFrame: 0,
+    scanTimer: null,
+    decorateTimer: null,
   };
 
   const locale = (() => {
@@ -26,9 +26,7 @@
     if (browser.startsWith("zh")) return "zh";
 
     const pageText = String(document.body?.textContent || "");
-    if (pageText.includes("节点管理") || pageText.includes("节点标签")) return "zh";
-
-    return "en";
+    return pageText.includes("节点") ? "zh" : "en";
   })();
 
   const copy = locale === "zh" ? {
@@ -45,7 +43,7 @@
     tagLabels: ["节点标签", "Node Tags", "Tags"],
     nodeNameLabels: ["节点名称", "Node Name", "Name"],
     hostLabels: ["节点地址", "Node Address", "Address", "Host"],
-    trafficLimitLabels: ["流量限制", "流控", "Traffic Limit", "Traffic limit"],
+    trafficLabels: ["流量限制", "流控", "Traffic Limit", "Traffic limit"],
     addWords: ["添加节点", "新建节点", "Add Node", "New Node"],
   } : {
     resetDayLabel: "Monthly reset day",
@@ -61,7 +59,7 @@
     tagLabels: ["Node Tags", "Tags", "节点标签"],
     nodeNameLabels: ["Node Name", "Name", "节点名称"],
     hostLabels: ["Node Address", "Address", "Host", "节点地址"],
-    trafficLimitLabels: ["Traffic Limit", "Traffic limit", "流量限制", "流控"],
+    trafficLabels: ["Traffic Limit", "Traffic limit", "流量限制", "流控"],
     addWords: ["Add Node", "New Node", "添加节点", "新建节点"],
   };
 
@@ -104,17 +102,19 @@
     scheduleDecorate();
   }
 
-  function visibleElement(selector) {
-    return [...document.querySelectorAll(selector)].find(isVisible) || null;
+  function getVisibleMetadataSection() {
+    return [...document.querySelectorAll("[data-xboard-node-admin-fields]")]
+      .find(isVisible) || null;
   }
 
   function collectMetadataValues() {
-    const resetInput = visibleElement('[data-field="traffic-reset-day"]');
-    const remarkInput = visibleElement('[data-field="remark"]');
-    if (!resetInput || !remarkInput) return null;
+    const section = getVisibleMetadataSection();
+    if (!section) return null;
 
-    const resetDay = Number.parseInt(resetInput.value || "", 10);
-    const remark = String(remarkInput.value || "").trim();
+    const resetInput = section.querySelector('[data-field="traffic-reset-day"]');
+    const remarkInput = section.querySelector('[data-field="remark"]');
+    const resetDay = Number.parseInt(resetInput?.value || "", 10);
+    const remark = String(remarkInput?.value || "").trim();
 
     return {
       traffic_reset_day: Number.isInteger(resetDay) && resetDay >= 1 && resetDay <= 31
@@ -161,8 +161,7 @@
       }
     }
 
-    if (typeof body === "object") return mergeObjectMetadata(body);
-    return body;
+    return typeof body === "object" ? mergeObjectMetadata(body) : body;
   }
 
   function installFetchInterceptor() {
@@ -184,7 +183,7 @@
             const body = await input.clone().text();
             requestInput = new Request(input, { body: mergeRequestBody(body) });
           } catch (_) {
-            // Leave unusual Request bodies untouched.
+            // Do not interfere with unusual Request bodies.
           }
         }
       }
@@ -230,14 +229,14 @@
     };
   }
 
-  function labelMatches(text, variants) {
-    const normalized = normalizeText(text);
+  function labelMatches(value, variants) {
+    const text = normalizeText(value);
     return variants.some((variant) => {
       const target = normalizeText(variant);
-      return normalized === target ||
-        normalized.startsWith(`${target} `) ||
-        normalized.startsWith(`${target}(`) ||
-        normalized.startsWith(`${target}（`);
+      return text === target ||
+        text.startsWith(`${target} `) ||
+        text.startsWith(`${target}(`) ||
+        text.startsWith(`${target}（`);
     });
   }
 
@@ -246,10 +245,10 @@
     for (const element of elements) {
       if (!labelMatches(element.textContent, variants)) continue;
 
-      const childOwnsLabel = [...element.children].some((child) =>
+      const childOwnsText = [...element.children].some((child) =>
         labelMatches(child.textContent, variants)
       );
-      if (!childOwnsLabel || element.tagName === "LABEL") return element;
+      if (!childOwnsText || element.tagName === "LABEL") return element;
     }
     return null;
   }
@@ -274,94 +273,51 @@
     return null;
   }
 
-  function findFieldContainer(label, editor, sameLevelParent = null) {
+  function findFieldContainer(label, editor) {
     if (!label) return null;
-
-    if (sameLevelParent) {
-      let current = label;
-      for (let depth = 0; depth < 12 && current?.parentElement; depth += 1) {
-        if (current.parentElement === sameLevelParent) return current;
-        if (current === editor) break;
-        current = current.parentElement;
-      }
-    }
-
     let current = label;
-    for (let depth = 0; depth < 8 && current?.parentElement && current !== editor; depth += 1) {
+
+    for (let depth = 0; depth < 7 && current?.parentElement && current !== editor; depth += 1) {
       current = current.parentElement;
       const controls = current.querySelectorAll("input, textarea, button, [role='combobox']").length;
       const labels = current.querySelectorAll("label, [data-slot='label']").length;
-      if (controls >= 1 && controls <= 8 && labels <= 4) return current;
+      if (controls >= 1 && controls <= 6 && labels <= 3) return current;
     }
 
     return label.parentElement;
   }
 
-  function setLabelText(root, variants, text) {
-    const label = findLabelElement(root, variants) || root.querySelector("label, [data-slot='label']");
-    if (!label) return;
+  function findEditorRoot(tagLabel) {
+    let current = tagLabel.parentElement;
+    let fallback = null;
 
-    const textNode = [...label.childNodes].find((node) =>
-      node.nodeType === Node.TEXT_NODE && normalizeText(node.nodeValue)
-    );
-    if (textNode) {
-      textNode.nodeValue = text;
-    } else {
-      label.prepend(document.createTextNode(text));
+    for (let depth = 0; depth < 18 && current; depth += 1) {
+      const controls = current.querySelectorAll("input, textarea, select, [role='combobox']").length;
+      const hasNodeName = Boolean(findLabelElement(current, copy.nodeNameLabels));
+      const text = normalizeText(current.textContent);
+      const hasHeading = [
+        "编辑节点", "添加节点", "新建节点",
+        "Edit Node", "Add Node", "New Node",
+      ].some((word) => text.includes(word));
+
+      if (controls >= 2 && (hasNodeName || hasHeading)) {
+        fallback = current;
+        if (current.matches("[role='dialog'], form, [data-state='open']")) return current;
+      }
+      current = current.parentElement;
     }
-    label.removeAttribute("for");
+
+    return fallback;
   }
 
-  function sanitizeNativeField(field) {
-    field.querySelectorAll("[id], [name], [for], [aria-describedby], [aria-controls]").forEach((element) => {
-      element.removeAttribute("id");
-      element.removeAttribute("name");
-      element.removeAttribute("for");
-      element.removeAttribute("aria-describedby");
-      element.removeAttribute("aria-controls");
+  function findVisibleTagLabels() {
+    const elements = document.querySelectorAll("label, [data-slot='label'], span, p");
+    return [...elements].filter((element) => {
+      if (!isVisible(element) || !labelMatches(element.textContent, copy.tagLabels)) return false;
+      return ![...element.children].some((child) =>
+        labelMatches(child.textContent, copy.tagLabels)
+      );
     });
-    field.querySelectorAll("[role='alert']").forEach((element) => element.remove());
-  }
-
-  function cloneNativeField(templateField, labelVariants, labelText, kind, node) {
-    if (!templateField) return null;
-
-    const field = templateField.cloneNode(true);
-    sanitizeNativeField(field);
-    setLabelText(field, labelVariants, labelText);
-
-    const input = field.querySelector("input, textarea");
-    if (!input) return null;
-
-    input.disabled = false;
-    input.readOnly = false;
-    input.removeAttribute("value");
-    input.removeAttribute("aria-invalid");
-
-    if (kind === "reset") {
-      field.dataset.xboardNodeAdminResetField = "1";
-      input.dataset.field = "traffic-reset-day";
-      input.type = "number";
-      input.min = "1";
-      input.max = "31";
-      input.step = "1";
-      input.inputMode = "numeric";
-      input.placeholder = copy.resetDayPlaceholder;
-      input.value = node?.traffic_reset_day ? String(node.traffic_reset_day) : "";
-    } else {
-      field.dataset.xboardNodeAdminRemarkField = "1";
-      input.dataset.field = "remark";
-      input.type = "text";
-      input.maxLength = 2000;
-      input.placeholder = copy.remarkPlaceholder;
-      input.value = node?.remark || "";
-    }
-
-    field.dataset.nodeId = node?.id !== undefined ? String(node.id) : "";
-    field.dataset.dirty = "0";
-    field.addEventListener("input", () => { field.dataset.dirty = "1"; });
-    field.addEventListener("change", () => { field.dataset.dirty = "1"; });
-    return field;
   }
 
   function isAddEditor(editor) {
@@ -394,51 +350,118 @@
       : null;
   }
 
-  function findEditorRoot(tagLabel) {
-    let current = tagLabel.parentElement;
-    let fallback = null;
+  function copyComputedControlStyle(source, target) {
+    if (!source || !target) return;
 
-    for (let depth = 0; depth < 18 && current; depth += 1) {
-      const controls = current.querySelectorAll("input, textarea, select, [role='combobox']").length;
-      const hasNodeName = Boolean(findLabelElement(current, copy.nodeNameLabels));
-      const text = normalizeText(current.textContent);
-      const hasHeading = [
-        "编辑节点", "添加节点", "新建节点",
-        "Edit Node", "Add Node", "New Node",
-      ].some((word) => text.includes(word));
+    target.className = source.className || "";
+    const style = getComputedStyle(source);
+    const properties = [
+      "boxSizing", "width", "height", "minHeight", "paddingTop", "paddingRight",
+      "paddingBottom", "paddingLeft", "borderTopWidth", "borderRightWidth",
+      "borderBottomWidth", "borderLeftWidth", "borderTopStyle", "borderRightStyle",
+      "borderBottomStyle", "borderLeftStyle", "borderTopColor", "borderRightColor",
+      "borderBottomColor", "borderLeftColor", "borderRadius", "backgroundColor",
+      "color", "fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing",
+      "boxShadow", "outline", "transition",
+    ];
 
-      if (controls >= 2 && (hasNodeName || hasHeading)) {
-        fallback = current;
-        if (current.matches("[role='dialog'], form, [data-state='open']")) return current;
-      }
-      current = current.parentElement;
+    for (const property of properties) {
+      target.style[property] = style[property];
     }
-
-    return fallback;
+    target.style.pointerEvents = "auto";
+    target.style.position = "relative";
+    target.style.zIndex = "0";
   }
 
-  function findVisibleTagLabels() {
-    const elements = document.querySelectorAll("label, [data-slot='label'], span, p");
-    return [...elements].filter((element) => {
-      if (!isVisible(element) || !labelMatches(element.textContent, copy.tagLabels)) return false;
-      return ![...element.children].some((child) => labelMatches(child.textContent, copy.tagLabels));
-    });
+  function copyComputedLabelStyle(source, target) {
+    if (!source || !target) return;
+
+    target.className = source.className || "";
+    const style = getComputedStyle(source);
+    for (const property of [
+      "color", "fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing",
+      "display", "marginBottom",
+    ]) {
+      target.style[property] = style[property];
+    }
   }
 
-  function hydrateNativeFields(resetField, remarkField, node) {
+  function createSafeField(labelText, input, sourceLabel, sourceInput) {
+    const field = document.createElement("div");
+    field.className = "xboard-node-admin-field";
+
+    const label = document.createElement("label");
+    label.className = "xboard-node-admin-label";
+    label.textContent = labelText;
+
+    copyComputedLabelStyle(sourceLabel, label);
+    copyComputedControlStyle(sourceInput, input);
+
+    field.append(label, input);
+    return field;
+  }
+
+  function createMetadataSection(editor, node) {
+    const section = document.createElement("div");
+    section.dataset.xboardNodeAdminFields = "1";
+    section.dataset.nodeId = node?.id !== undefined ? String(node.id) : "";
+    section.dataset.dirty = "0";
+    section.className = "xboard-node-admin-section";
+
+    const trafficLabel = findLabelElement(editor, copy.trafficLabels);
+    const trafficInput = findInputByLabel(editor, copy.trafficLabels);
+    const hostLabel = findLabelElement(editor, copy.hostLabels);
+    const hostInput = findInputByLabel(editor, copy.hostLabels);
+
+    const resetInput = document.createElement("input");
+    resetInput.type = "number";
+    resetInput.min = "1";
+    resetInput.max = "31";
+    resetInput.step = "1";
+    resetInput.inputMode = "numeric";
+    resetInput.placeholder = copy.resetDayPlaceholder;
+    resetInput.value = node?.traffic_reset_day ? String(node.traffic_reset_day) : "";
+    resetInput.dataset.field = "traffic-reset-day";
+    resetInput.autocomplete = "off";
+
+    const remarkInput = document.createElement("input");
+    remarkInput.type = "text";
+    remarkInput.maxLength = 2000;
+    remarkInput.placeholder = copy.remarkPlaceholder;
+    remarkInput.value = node?.remark || "";
+    remarkInput.dataset.field = "remark";
+    remarkInput.autocomplete = "off";
+
+    const resetField = createSafeField(
+      copy.resetDayLabel,
+      resetInput,
+      trafficLabel,
+      trafficInput
+    );
+    const remarkField = createSafeField(
+      copy.remarkLabel,
+      remarkInput,
+      hostLabel,
+      hostInput
+    );
+
+    section.append(resetField, remarkField);
+    section.addEventListener("input", () => { section.dataset.dirty = "1"; });
+    section.addEventListener("change", () => { section.dataset.dirty = "1"; });
+    return section;
+  }
+
+  function hydrateSection(section, node) {
+    if (!section || section.dataset.dirty === "1") return;
+
     const expectedId = node?.id !== undefined ? String(node.id) : "";
+    if (section.dataset.nodeId === expectedId) return;
 
-    if (resetField && resetField.dataset.dirty !== "1" && resetField.dataset.nodeId !== expectedId) {
-      resetField.dataset.nodeId = expectedId;
-      const input = resetField.querySelector('[data-field="traffic-reset-day"]');
-      if (input) input.value = node?.traffic_reset_day ? String(node.traffic_reset_day) : "";
-    }
-
-    if (remarkField && remarkField.dataset.dirty !== "1" && remarkField.dataset.nodeId !== expectedId) {
-      remarkField.dataset.nodeId = expectedId;
-      const input = remarkField.querySelector('[data-field="remark"]');
-      if (input) input.value = node?.remark || "";
-    }
+    section.dataset.nodeId = expectedId;
+    const resetInput = section.querySelector('[data-field="traffic-reset-day"]');
+    const remarkInput = section.querySelector('[data-field="remark"]');
+    if (resetInput) resetInput.value = node?.traffic_reset_day ? String(node.traffic_reset_day) : "";
+    if (remarkInput) remarkInput.value = node?.remark || "";
   }
 
   function injectMetadataFields() {
@@ -447,47 +470,18 @@
       if (!editor) continue;
 
       const tagField = findFieldContainer(tagLabel, editor);
-      const parent = tagField?.parentElement;
-      if (!tagField || !parent) continue;
+      if (!tagField?.parentElement) continue;
 
       const node = findNodeForEditor(editor);
-      let resetField = editor.querySelector("[data-xboard-node-admin-reset-field]");
-      let remarkField = editor.querySelector("[data-xboard-node-admin-remark-field]");
-
-      if (!resetField) {
-        const trafficLabel = findLabelElement(editor, copy.trafficLimitLabels);
-        const trafficTemplate = findFieldContainer(trafficLabel, editor, parent) ||
-          findFieldContainer(trafficLabel, editor);
-        resetField = cloneNativeField(
-          trafficTemplate,
-          copy.trafficLimitLabels,
-          copy.resetDayLabel,
-          "reset",
-          node
-        );
+      let section = editor.querySelector("[data-xboard-node-admin-fields]");
+      if (!section) {
+        section = createMetadataSection(editor, node);
       }
 
-      if (!remarkField) {
-        const hostLabel = findLabelElement(editor, copy.hostLabels);
-        const hostTemplate = findFieldContainer(hostLabel, editor, parent) ||
-          findFieldContainer(hostLabel, editor);
-        remarkField = cloneNativeField(
-          hostTemplate,
-          copy.hostLabels,
-          copy.remarkLabel,
-          "remark",
-          node
-        );
-      }
-
-      if (!resetField || !remarkField) continue;
-
-      // Reinsert on every pass. React may reorder unknown DOM nodes during a
-      // controlled-form render; this keeps reset day and remark directly above
-      // the native Node Tags field in a stable order.
-      parent.insertBefore(resetField, tagField);
-      parent.insertBefore(remarkField, tagField);
-      hydrateNativeFields(resetField, remarkField, node);
+      // Keep the custom fields immediately above Node Tags without touching,
+      // cloning, wrapping, or overlaying any native React form control.
+      tagField.parentElement.insertBefore(section, tagField);
+      hydrateSection(section, node);
     }
   }
 
@@ -526,83 +520,36 @@
     ) || matches.at(-1) || null;
   }
 
-  function findNodeTitleRow(cell, nodeName) {
+  function findStableNodeColumn(cell, nodeName) {
     const nameElement = findDeepestExactTextElement(cell, nodeName);
     if (!nameElement) return null;
 
-    let current = nameElement;
-    let candidate = nameElement;
+    let current = nameElement.parentElement;
+    let fallback = nameElement.parentElement;
 
-    for (let depth = 0; depth < 6 && current?.parentElement && current.parentElement !== cell; depth += 1) {
-      const parent = current.parentElement;
-      const style = getComputedStyle(parent);
-      const display = style.display;
-      const direction = style.flexDirection;
-      const parentText = normalizeText(parent.textContent);
-
-      if ((display === "flex" || display === "inline-flex") &&
-          !direction.startsWith("column") && parentText.includes(nodeName)) {
-        candidate = parent;
-        break;
+    for (let depth = 0; depth < 7 && current && current !== cell; depth += 1) {
+      const style = getComputedStyle(current);
+      if ((style.display === "flex" || style.display === "inline-flex") &&
+          style.flexDirection.startsWith("column")) {
+        return current;
       }
-
-      if (parentText === nodeName) {
-        candidate = parent;
-        current = parent;
-        continue;
-      }
-      break;
+      fallback = current;
+      current = current.parentElement;
     }
 
-    return candidate;
+    return fallback;
   }
 
-  function metadataParts(node) {
+  function metadataText(node) {
     const limit = Number(node?.transfer_enable || 0) > 0
       ? `${formatGb(node.transfer_enable)} GB`
       : copy.unlimited;
-    const resetDay = node?.traffic_reset_day
+    const day = node?.traffic_reset_day
       ? copy.everyMonthDay(node.traffic_reset_day)
       : copy.notSet;
     const remark = normalizeText(node?.remark || "") || copy.notSet;
 
-    return [
-      [copy.monthLimit, limit],
-      [copy.resetDay, resetDay],
-      [copy.remark, remark],
-    ];
-  }
-
-  function renderNodeMetadata(meta, node) {
-    const parts = metadataParts(node);
-    const fragment = document.createDocumentFragment();
-
-    parts.forEach(([label, value], index) => {
-      if (index > 0) {
-        const separator = document.createElement("span");
-        separator.className = "xboard-node-admin-row-separator";
-        separator.textContent = "·";
-        fragment.append(separator);
-      }
-
-      const item = document.createElement("span");
-      item.className = "xboard-node-admin-row-item";
-      if (label === copy.remark) item.classList.add("xboard-node-admin-row-remark");
-
-      const labelElement = document.createElement("span");
-      labelElement.className = "xboard-node-admin-row-label";
-      labelElement.textContent = label;
-
-      const valueElement = document.createElement("span");
-      valueElement.className = "xboard-node-admin-row-value";
-      valueElement.textContent = value;
-
-      item.append(labelElement, valueElement);
-      fragment.append(item);
-    });
-
-    meta.replaceChildren(fragment);
-    meta.title = parts.map(([label, value]) => `${label}: ${value}`).join("\n");
+    return `${copy.monthLimit} ${limit} · ${copy.resetDay} ${day} · ${copy.remark} ${remark}`;
   }
 
   function decorateNodeRows() {
@@ -616,13 +563,11 @@
 
       const name = normalizeText(node.name);
       const cells = [...row.querySelectorAll("td, [role='cell']")];
-      const cell = cells.find((candidate) =>
-        findDeepestExactTextElement(candidate, name)
-      );
+      const cell = cells.find((candidate) => findDeepestExactTextElement(candidate, name));
       if (!cell) continue;
 
-      const titleRow = findNodeTitleRow(cell, name);
-      if (!titleRow?.parentElement) continue;
+      const column = findStableNodeColumn(cell, name);
+      if (!column) continue;
 
       let meta = row.querySelector(`[data-xboard-node-admin-row-meta="${CSS.escape(String(node.id))}"]`);
       if (!meta) {
@@ -631,23 +576,24 @@
         meta.className = "text-xs text-muted-foreground xboard-node-admin-row-meta";
       }
 
-      renderNodeMetadata(meta, node);
+      const text = metadataText(node);
+      if (meta.textContent !== text) meta.textContent = text;
+      meta.title = text;
 
-      // Always move it after the native node-title row. React can move foreign
-      // children during reconciliation; order: max plus reinsertion prevents the
-      // metadata from jumping above the node name after refreshes.
-      titleRow.insertAdjacentElement("afterend", meta);
+      // React may reorder foreign nodes. Appending on every reconciliation and
+      // forcing the largest flex order keeps this line below the node title.
+      column.append(meta);
     }
   }
 
   function scheduleScan() {
-    cancelAnimationFrame(state.scanFrame);
-    state.scanFrame = requestAnimationFrame(injectMetadataFields);
+    clearTimeout(state.scanTimer);
+    state.scanTimer = setTimeout(injectMetadataFields, 40);
   }
 
   function scheduleDecorate() {
-    cancelAnimationFrame(state.decorateFrame);
-    state.decorateFrame = requestAnimationFrame(decorateNodeRows);
+    clearTimeout(state.decorateTimer);
+    state.decorateTimer = setTimeout(decorateNodeRows, 60);
   }
 
   function installClickTracking() {
@@ -671,22 +617,43 @@
   function installStyles() {
     const style = document.createElement("style");
     style.textContent = `
-      [data-xboard-node-admin-reset-field],
-      [data-xboard-node-admin-remark-field] {
+      .xboard-node-admin-section {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        width: 100%;
         min-width: 0;
+        margin: 0;
+        padding: 0;
+        position: relative;
+        z-index: 0;
+        pointer-events: auto;
+      }
+      .xboard-node-admin-field {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        gap: 0.5rem;
+        position: relative;
+        z-index: 0;
+        pointer-events: auto;
+      }
+      .xboard-node-admin-label {
+        pointer-events: auto;
       }
       [data-field="traffic-reset-day"],
       [data-field="remark"] {
-        font: inherit;
+        display: block;
+        width: 100%;
+        pointer-events: auto !important;
+        position: relative !important;
+        z-index: 0 !important;
       }
       .xboard-node-admin-row-meta {
         order: 2147483647 !important;
-        display: flex;
-        align-items: center;
-        align-self: stretch;
-        min-width: 0;
+        display: block;
         width: 100%;
-        max-width: 100%;
+        min-width: 0;
         margin-top: 0.25rem;
         overflow: hidden;
         color: hsl(var(--muted-foreground));
@@ -694,30 +661,13 @@
         font-size: 0.75rem;
         font-weight: 400;
         line-height: 1rem;
+        text-overflow: ellipsis;
         white-space: nowrap;
       }
-      .xboard-node-admin-row-item {
-        display: inline-flex;
-        min-width: 0;
-        gap: 0.2rem;
-      }
-      .xboard-node-admin-row-label {
-        flex: none;
-        opacity: 0.72;
-      }
-      .xboard-node-admin-row-value {
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .xboard-node-admin-row-separator {
-        flex: none;
-        margin: 0 0.4rem;
-        opacity: 0.45;
-      }
-      .xboard-node-admin-row-remark {
-        min-width: 0;
-        max-width: 15rem;
+      @media (max-width: 720px) {
+        .xboard-node-admin-section {
+          grid-template-columns: 1fr;
+        }
       }
     `;
     document.head.append(style);
