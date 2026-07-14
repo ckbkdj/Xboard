@@ -64,11 +64,14 @@ $checks = [
     ],
     '/www/resources/views/admin.blade.php' => [
         '/assets/custom/admin-node-metadata.js',
+        "filemtime(public_path('assets/custom/admin-node-metadata.js'))",
     ],
     '/www/public/assets/custom/admin-node-metadata.js' => [
         'traffic_reset_day',
         'server/manage/save',
         'server/manage/getNodes',
+        'String(remarkInput?.value || "").trim()',
+        'if (meta.textContent !== summary.short)',
     ],
     '/www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php' => [
         'traffic_reset_day',
@@ -86,4 +89,4 @@ foreach ($checks as $path => $needles) {
     }
 }
 
-echo "Node admin metadata self-test passed: limit, reset day, remark, schedule, and admin UI are present.\n";
+echo "Node admin metadata self-test passed: limit, reset day, remark, schedule, admin UI, and cache-safe rendering are present.\n";
