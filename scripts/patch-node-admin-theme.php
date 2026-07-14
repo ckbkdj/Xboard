@@ -138,7 +138,8 @@ $content = $replaceRegex(
         font: inherit;
       }
       .xboard-node-admin-field small {
-        color: hsl(var(--muted-foreground, 0 0% 45%));
+        color: inherit;
+        opacity: 0.68;
         font-family: inherit;
         font-size: 0.75rem;
         font-weight: 400;
@@ -173,7 +174,8 @@ $content = $replaceRegex(
         max-width: 420px;
         margin-top: 4px;
         overflow: hidden;
-        color: hsl(var(--muted-foreground, 0 0% 45%));
+        color: inherit;
+        opacity: 0.68;
         font-family: inherit;
         font-size: 0.75rem;
         font-weight: 400;
