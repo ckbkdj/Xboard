@@ -68,8 +68,8 @@ $checks = [
     ],
     '/www/public/assets/custom/admin-node-metadata.js' => [
         'traffic_reset_day',
-        'server/manage/save',
-        'server/manage/getNodes',
+        'isManagedUrl(url, "save")',
+        'isManagedUrl(url, "getNodes")',
         'String(remarkInput?.value || "").trim()',
         'if (meta.textContent !== summary.short)',
     ],
