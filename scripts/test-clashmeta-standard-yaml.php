@@ -145,34 +145,37 @@ $yaml = preg_replace(
     $yaml
 ) ?? $yaml;
 
-$assert(!preg_match('/^\s*-\s*\{/m', $yaml), 'A proxy is still emitted as an inline flow mapping');
-$assert(!preg_match('/:\s*\{[^\n]*\}/m', $yaml), 'A nested proxy map is still emitted inline');
-$assert(!preg_match('/:\s*\[[^\n]*\]/m', $yaml), 'A nested proxy list is still emitted inline');
-$assert(!preg_match('/^  -\s*$/m', $yaml), 'A proxy still uses a dash-only mapping line');
+$proxySections = preg_split('/^proxy-groups:\s*$/m', $yaml, 2);
+$proxiesYaml = $proxySections[0] ?? $yaml;
 
-$blockCount = preg_match_all('/^  - name:/m', $yaml);
+$assert(!preg_match('/^\s*-\s*\{/m', $proxiesYaml), 'A proxy is still emitted as an inline flow mapping');
+$assert(!preg_match('/:\s*\{[^\n]*\}/m', $proxiesYaml), 'A nested proxy map is still emitted inline');
+$assert(!preg_match('/:\s*\[[^\n]*\]/m', $proxiesYaml), 'A nested proxy list is still emitted inline');
+$assert(!preg_match('/^  -\s*$/m', $proxiesYaml), 'A proxy still uses a dash-only mapping line');
+
+$blockCount = preg_match_all('/^  - name:/m', $proxiesYaml);
 $assert(
     $blockCount === count($proxies),
-    "Expected " . count($proxies) . " '- name:' proxy entries, got {$blockCount}\n{$yaml}"
+    "Expected " . count($proxies) . " '- name:' proxy entries, got {$blockCount}\n{$proxiesYaml}"
 );
 
 foreach ($proxies as $proxy) {
     $name = (string) $proxy['name'];
     $type = (string) $proxy['type'];
     $assert(
-        str_contains($yaml, "  - name: {$name}\n    type: {$type}\n"),
+        str_contains($proxiesYaml, "  - name: {$name}\n    type: {$type}\n"),
         "{$name} is not emitted as a conventional '- name:' block YAML proxy"
     );
 }
 
-$assert(str_contains($yaml, "    ws-opts:\n      path: /vmess\n      headers:\n        Host: vmess.example.com\n"), 'VMess nested WS options are not block YAML');
-$assert(str_contains($yaml, "    grpc-opts:\n      grpc-service-name: vless-service\n"), 'VLESS nested gRPC options are not block YAML');
-$assert(str_contains($yaml, "    alpn:\n      - h3\n"), 'Hysteria2 ALPN is not a block list');
-$assert(str_contains($yaml, "    obfs: salamander\n"), 'Missing Hysteria2 salamander obfuscation');
-$assert(str_contains($yaml, "    obfs-password: test-obfs-password\n"), 'Missing Hysteria2 obfuscation password');
-$assert(str_contains($yaml, "    udp: true\n"), 'Missing UDP field');
-$assert(str_contains($yaml, "    up: 50\n"), 'Missing Hysteria2 upload bandwidth');
-$assert(str_contains($yaml, "    down: 200\n"), 'Missing Hysteria2 download bandwidth');
+$assert(str_contains($proxiesYaml, "    ws-opts:\n      path: /vmess\n      headers:\n        Host: vmess.example.com\n"), 'VMess nested WS options are not block YAML');
+$assert(str_contains($proxiesYaml, "    grpc-opts:\n      grpc-service-name: vless-service\n"), 'VLESS nested gRPC options are not block YAML');
+$assert(str_contains($proxiesYaml, "    alpn:\n      - h3\n"), 'Hysteria2 ALPN is not a block list');
+$assert(str_contains($proxiesYaml, "    obfs: salamander\n"), 'Missing Hysteria2 salamander obfuscation');
+$assert(str_contains($proxiesYaml, "    obfs-password: test-obfs-password\n"), 'Missing Hysteria2 obfuscation password');
+$assert(str_contains($proxiesYaml, "    udp: true\n"), 'Missing UDP field');
+$assert(str_contains($proxiesYaml, "    up: 50\n"), 'Missing Hysteria2 upload bandwidth');
+$assert(str_contains($proxiesYaml, "    down: 200\n"), 'Missing Hysteria2 download bandwidth');
 
 $parsed = Yaml::parse($yaml);
 $parsedProxies = $parsed['proxies'] ?? [];
