@@ -1,39 +1,67 @@
 FROM ghcr.io/cedar2025/xboard:latest
 
-# Overlay only the files customized by this branch. This avoids rebuilding PHP
-# extensions and Composer dependencies for every subscription/admin change.
-COPY app/Support/AbstractProtocol.php /www/app/Support/AbstractProtocol.php
-COPY app/Services/ServerService.php /www/app/Services/ServerService.php
-COPY app/Services/ServerTrafficResetService.php /www/app/Services/ServerTrafficResetService.php
-COPY app/Console/Commands/ResetServerTraffic.php /www/app/Console/Commands/ResetServerTraffic.php
-COPY database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
-COPY resources/rules/default.clash.yaml /www/resources/rules/default.clash.yaml
-COPY public/assets/custom/admin-node-metadata.js /www/public/assets/custom/admin-node-metadata.js
-COPY .docker/entrypoint.sh /entrypoint.sh
-COPY scripts/patch-carrier-preferred.php /tmp/patch-carrier-preferred.php
-COPY scripts/patch-node-admin-metadata.php /tmp/patch-node-admin-metadata.php
-COPY scripts/patch-node-admin-ui.php /tmp/patch-node-admin-ui.php
-COPY scripts/test-carrier-preferred.php /tmp/test-carrier-preferred.php
-COPY scripts/test-node-admin-metadata.php /tmp/test-node-admin-metadata.php
+# Patch the checked-out branch sources in a temporary directory, then overlay the
+# resulting files onto the official image. This avoids depending on the exact
+# source revision bundled inside ghcr.io/cedar2025/xboard:latest.
+COPY app /tmp/custom-src/app
+COPY database /tmp/custom-src/database
+COPY resources /tmp/custom-src/resources
+COPY public/assets/custom /tmp/custom-src/public/assets/custom
+COPY scripts /tmp/custom-src/scripts
+COPY .docker /tmp/custom-src/.docker
 
-RUN php /tmp/patch-carrier-preferred.php /www/app/Support/AbstractProtocol.php && \
-    php /tmp/patch-node-admin-metadata.php /www && \
-    php /tmp/patch-node-admin-ui.php /www && \
-    php -l /www/app/Support/AbstractProtocol.php && \
-    php -l /www/app/Services/ServerService.php && \
-    php -l /www/app/Services/ServerTrafficResetService.php && \
-    php -l /www/app/Console/Commands/ResetServerTraffic.php && \
-    php -l /www/app/Models/Server.php && \
-    php -l /www/app/Http/Requests/Admin/ServerSave.php && \
-    php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php && \
-    php -l /www/app/Console/Kernel.php && \
-    php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php && \
-    php /tmp/test-carrier-preferred.php && \
-    php /tmp/test-node-admin-metadata.php && \
-    chmod +x /entrypoint.sh && \
-    rm -f \
-      /tmp/patch-carrier-preferred.php \
-      /tmp/patch-node-admin-metadata.php \
-      /tmp/patch-node-admin-ui.php \
-      /tmp/test-carrier-preferred.php \
-      /tmp/test-node-admin-metadata.php
+RUN set -eux; \
+    php /tmp/custom-src/scripts/patch-carrier-preferred.php \
+        /tmp/custom-src/app/Support/AbstractProtocol.php; \
+    php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src; \
+    php /tmp/custom-src/scripts/patch-node-admin-ui.php /tmp/custom-src; \
+    mkdir -p \
+        /www/app/Support \
+        /www/app/Services \
+        /www/app/Console/Commands \
+        /www/app/Http/Requests/Admin \
+        /www/app/Http/Controllers/V2/Admin/Server \
+        /www/app/Models \
+        /www/app/Console \
+        /www/database/migrations \
+        /www/resources/rules \
+        /www/resources/views \
+        /www/public/assets/custom; \
+    cp /tmp/custom-src/app/Support/AbstractProtocol.php \
+        /www/app/Support/AbstractProtocol.php; \
+    cp /tmp/custom-src/app/Services/ServerService.php \
+        /www/app/Services/ServerService.php; \
+    cp /tmp/custom-src/app/Services/ServerTrafficResetService.php \
+        /www/app/Services/ServerTrafficResetService.php; \
+    cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php \
+        /www/app/Console/Commands/ResetServerTraffic.php; \
+    cp /tmp/custom-src/app/Models/Server.php \
+        /www/app/Models/Server.php; \
+    cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php \
+        /www/app/Http/Requests/Admin/ServerSave.php; \
+    cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php \
+        /www/app/Http/Controllers/V2/Admin/Server/ManageController.php; \
+    cp /tmp/custom-src/app/Console/Kernel.php \
+        /www/app/Console/Kernel.php; \
+    cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php \
+        /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php; \
+    cp /tmp/custom-src/resources/rules/default.clash.yaml \
+        /www/resources/rules/default.clash.yaml; \
+    cp /tmp/custom-src/resources/views/admin.blade.php \
+        /www/resources/views/admin.blade.php; \
+    cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js \
+        /www/public/assets/custom/admin-node-metadata.js; \
+    cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh; \
+    chmod +x /entrypoint.sh; \
+    php -l /www/app/Support/AbstractProtocol.php; \
+    php -l /www/app/Services/ServerService.php; \
+    php -l /www/app/Services/ServerTrafficResetService.php; \
+    php -l /www/app/Console/Commands/ResetServerTraffic.php; \
+    php -l /www/app/Models/Server.php; \
+    php -l /www/app/Http/Requests/Admin/ServerSave.php; \
+    php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php; \
+    php -l /www/app/Console/Kernel.php; \
+    php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php; \
+    php /tmp/custom-src/scripts/test-carrier-preferred.php; \
+    php /tmp/custom-src/scripts/test-node-admin-metadata.php; \
+    rm -rf /tmp/custom-src
