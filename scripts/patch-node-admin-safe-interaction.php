@@ -20,6 +20,44 @@ $replaceExact = static function (string $content, string $search, string $replac
     return str_replace($search, $replace, $content);
 };
 
+// Keep the reset day as a real independent select. It visually follows the
+// native traffic-control input, but it does not clone any React component,
+// hidden overlay, identifier, event handler, or sibling field.
+$content = $replaceExact(
+    $content,
+    <<<'JS'
+    const resetInput = document.createElement("input");
+    resetInput.type = "number";
+    resetInput.min = "1";
+    resetInput.max = "31";
+    resetInput.step = "1";
+    resetInput.inputMode = "numeric";
+    resetInput.placeholder = copy.resetDayPlaceholder;
+    resetInput.value = node?.traffic_reset_day ? String(node.traffic_reset_day) : "";
+    resetInput.dataset.field = "traffic-reset-day";
+    resetInput.autocomplete = "off";
+JS,
+    <<<'JS'
+    const resetInput = document.createElement("select");
+    resetInput.dataset.field = "traffic-reset-day";
+    resetInput.setAttribute("aria-label", copy.resetDayLabel);
+
+    const unsetOption = document.createElement("option");
+    unsetOption.value = "";
+    unsetOption.textContent = copy.resetDayPlaceholder;
+    resetInput.append(unsetOption);
+
+    for (let day = 1; day <= 31; day += 1) {
+      const option = document.createElement("option");
+      option.value = String(day);
+      option.textContent = copy.everyMonthDay(day);
+      resetInput.append(option);
+    }
+    resetInput.value = node?.traffic_reset_day ? String(node.traffic_reset_day) : "";
+JS,
+    'independent monthly reset select'
+);
+
 // Never copy a fixed pixel width from a native input. The custom field should
 // use the active form grid width instead.
 $content = $replaceExact(
@@ -115,4 +153,4 @@ if (file_put_contents($path, $content) === false) {
     exit(1);
 }
 
-echo "Hardened node admin interactions: no cloned native controls, no stacking overlay, and focus-safe placement.\n";
+echo "Hardened node admin interactions: independent reset select, no cloned native controls, no stacking overlay, and focus-safe placement.\n";
