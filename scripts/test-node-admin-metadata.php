@@ -72,6 +72,10 @@ $checks = [
         'isManagedUrl(url, "getNodes")',
         'String(remarkInput?.value || "").trim()',
         'if (meta.textContent !== summary.short)',
+        'function inheritNativeEditorTheme',
+        'nativeControlClass',
+        'font-family: inherit',
+        'hsl(var(--muted-foreground',
     ],
     '/www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php' => [
         'traffic_reset_day',
@@ -89,4 +93,4 @@ foreach ($checks as $path => $needles) {
     }
 }
 
-echo "Node admin metadata self-test passed: limit, reset day, remark, schedule, admin UI, and cache-safe rendering are present.\n";
+echo "Node admin metadata self-test passed: limit, reset day, remark, schedule, drawer UI, cache-safe rendering, and active-theme inheritance are present.\n";
