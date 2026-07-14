@@ -271,7 +271,7 @@ $content = $replaceExact(
     $content,
     "  </script>\n  @php",
     "  </script>\n" .
-    "  <script src=\"/assets/custom/admin-node-metadata.js?v={{ urlencode((string) \$version) }}\"></script>\n" .
+    "  <script src=\"/assets/custom/admin-node-metadata.js?v={{ file_exists(public_path('assets/custom/admin-node-metadata.js')) ? filemtime(public_path('assets/custom/admin-node-metadata.js')) : urlencode((string) \$version) }}\"></script>\n" .
     "  @php",
     'admin node metadata asset'
 );
