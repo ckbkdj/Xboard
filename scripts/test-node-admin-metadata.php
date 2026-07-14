@@ -75,7 +75,7 @@ $checks = [
         'function inheritNativeEditorTheme',
         'nativeControlClass',
         'font-family: inherit',
-        'hsl(var(--muted-foreground',
+        'opacity: 0.68',
     ],
     '/www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php' => [
         'traffic_reset_day',
