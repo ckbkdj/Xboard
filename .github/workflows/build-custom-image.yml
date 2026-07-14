@@ -29,6 +29,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      issues: write
 
     steps:
       - name: Checkout repository
@@ -69,6 +70,7 @@ jobs:
             tags+=$'\n'"${image}:${VERSION_INPUT}"
           fi
 
+          printf '%s\n' "${tags}" > image-tags.txt
           {
             echo 'tags<<EOF'
             echo "${tags}"
@@ -77,41 +79,79 @@ jobs:
 
       - name: Build and push image
         id: build
-        continue-on-error: true
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./Dockerfile.custom
-          platforms: linux/amd64
-          push: true
-          pull: true
-          provenance: false
-          tags: ${{ steps.vars.outputs.tags }}
-          cache-from: type=gha,scope=xboard-custom-overlay
-          cache-to: type=gha,mode=max,scope=xboard-custom-overlay
+        shell: bash
+        run: |
+          set +e
+          tag_args=()
+          while IFS= read -r tag; do
+            [[ -n "${tag}" ]] && tag_args+=(--tag "${tag}")
+          done < image-tags.txt
 
-      - name: Retry build after transient network failure
-        if: steps.build.outcome == 'failure'
-        uses: docker/build-push-action@v6
+          status=1
+          for attempt in 1 2; do
+            echo "===== Docker build attempt ${attempt}/2 =====" | tee -a build.log
+            docker buildx build \
+              --file ./Dockerfile.custom \
+              --platform linux/amd64 \
+              --pull \
+              --push \
+              --provenance=false \
+              --progress=plain \
+              --cache-from type=gha,scope=xboard-custom-overlay \
+              --cache-to type=gha,mode=max,scope=xboard-custom-overlay \
+              "${tag_args[@]}" \
+              . 2>&1 | tee -a build.log
+            status=${PIPESTATUS[0]}
+            [[ ${status} -eq 0 ]] && break
+            sleep 10
+          done
+
+          echo "status=${status}" >> "${GITHUB_OUTPUT}"
+          exit 0
+
+      - name: Upload failed build log
+        if: steps.build.outputs.status != '0'
+        uses: actions/upload-artifact@v4
         with:
-          context: .
-          file: ./Dockerfile.custom
-          platforms: linux/amd64
-          push: true
-          pull: true
-          provenance: false
-          tags: ${{ steps.vars.outputs.tags }}
-          cache-from: type=gha,scope=xboard-custom-overlay
-          cache-to: type=gha,mode=max,scope=xboard-custom-overlay
+          name: xboard-build-failure-${{ github.run_id }}
+          path: build.log
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Publish failure diagnostics
+        if: steps.build.outputs.status != '0'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          {
+            echo "## Automatic Docker build failure"
+            echo
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo
+            echo "### Last 220 log lines"
+            echo '```text'
+            tail -n 220 build.log
+            echo '```'
+          } > failure.md
+
+          gh issue create \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "Docker build failed: ${GITHUB_SHA::12}" \
+            --body-file failure.md
+
+          exit 1
 
       - name: Write build summary
-        if: success()
+        if: steps.build.outputs.status == '0'
         shell: bash
         run: |
           {
             echo '## Xboard image published'
             echo
             echo '```text'
-            echo '${{ steps.vars.outputs.tags }}'
+            cat image-tags.txt
             echo '```'
           } >> "${GITHUB_STEP_SUMMARY}"
