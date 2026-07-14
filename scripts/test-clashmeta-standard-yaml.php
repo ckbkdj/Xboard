@@ -139,15 +139,21 @@ $config = [
 ];
 
 $yaml = Yaml::dump($config, 99, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);
+$yaml = preg_replace(
+    '/^([ ]*)-\n\1  ([^ \-\n][^:\n]*:[^\n]*)$/m',
+    '$1- $2',
+    $yaml
+) ?? $yaml;
 
 $assert(!preg_match('/^\s*-\s*\{/m', $yaml), 'A proxy is still emitted as an inline flow mapping');
 $assert(!preg_match('/:\s*\{[^\n]*\}/m', $yaml), 'A nested proxy map is still emitted inline');
 $assert(!preg_match('/:\s*\[[^\n]*\]/m', $yaml), 'A nested proxy list is still emitted inline');
+$assert(!preg_match('/^  -\s*$/m', $yaml), 'A proxy still uses a dash-only mapping line');
 
 $blockCount = preg_match_all('/^  - name:/m', $yaml);
 $assert(
     $blockCount === count($proxies),
-    "Expected " . count($proxies) . " block proxy entries, got {$blockCount}"
+    "Expected " . count($proxies) . " '- name:' proxy entries, got {$blockCount}\n{$yaml}"
 );
 
 foreach ($proxies as $proxy) {
@@ -155,7 +161,7 @@ foreach ($proxies as $proxy) {
     $type = (string) $proxy['type'];
     $assert(
         str_contains($yaml, "  - name: {$name}\n    type: {$type}\n"),
-        "{$name} is not emitted as a standard block YAML proxy"
+        "{$name} is not emitted as a conventional '- name:' block YAML proxy"
     );
 }
 
@@ -179,6 +185,10 @@ $assert(
     str_contains($source, 'Yaml::dump($config, 99, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE)'),
     'ClashMeta handle is not using all-protocol standard block YAML depth'
 );
+$assert(
+    str_contains($source, 'preg_replace(') && str_contains($source, "'$1- $2'"),
+    'ClashMeta handle is not normalizing mapping sequences to the conventional dash-key style'
+);
 
 $requiredBuilders = [
     'buildShadowsocks',
@@ -196,4 +206,4 @@ foreach ($requiredBuilders as $builder) {
     $assert(str_contains($source, "function {$builder}"), "Missing ClashMeta builder {$builder}");
 }
 
-echo "ClashMeta YAML self-test passed: every supported node type is emitted as standard block YAML.\n";
+echo "ClashMeta YAML self-test passed: every supported node type uses conventional '- name:' block YAML.\n";
