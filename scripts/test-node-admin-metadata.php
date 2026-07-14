@@ -70,12 +70,14 @@ $checks = [
         'traffic_reset_day',
         'isManagedUrl(url, "save")',
         'isManagedUrl(url, "getNodes")',
-        'String(remarkInput?.value || "").trim()',
-        'if (meta.textContent !== summary.short)',
-        'function inheritNativeEditorTheme',
-        'nativeControlClass',
-        'font-family: inherit',
-        'opacity: 0.68',
+        'function cloneNativeField',
+        'copy.trafficLimitLabels',
+        'copy.hostLabels',
+        'parent.insertBefore(resetField, tagField)',
+        'parent.insertBefore(remarkField, tagField)',
+        'titleRow.insertAdjacentElement("afterend", meta)',
+        'order: 2147483647 !important',
+        'xboard-node-admin-row-remark',
     ],
     '/www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php' => [
         'traffic_reset_day',
@@ -93,4 +95,4 @@ foreach ($checks as $path => $needles) {
     }
 }
 
-echo "Node admin metadata self-test passed: limit, reset day, remark, schedule, drawer UI, cache-safe rendering, and active-theme inheritance are present.\n";
+echo "Node admin metadata self-test passed: native traffic-control reset field, native address remark field, stable node-row placement, backend metadata, and schedule are present.\n";
