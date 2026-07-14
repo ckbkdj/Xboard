@@ -72,10 +72,16 @@ $checks = [
         'isManagedUrl(url, "getNodes")',
         'function createSafeField',
         'function copyComputedControlStyle',
-        'tagField.parentElement.insertBefore(section, tagField)',
+        'document.createElement("select")',
+        '--xboard-native-field-gap',
+        '--xboard-native-input-width',
+        'grid-template-columns: minmax(0, 1fr)',
+        'white-space: pre-line',
+        '`${copy.monthLimit}: ${limit}`',
+        '`${copy.resetDay}: ${day}`',
+        '`${copy.remark}: ${remark}`',
         'column.append(meta)',
         'order: 2147483647 !important',
-        'pointer-events: auto !important',
         'Do not interfere with unusual Request bodies',
     ],
     '/www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php' => [
@@ -94,4 +100,4 @@ foreach ($checks as $path => $needles) {
     }
 }
 
-echo "Node admin metadata self-test passed: safe independent controls, stable list placement, backend metadata, and reset schedule are present.\n";
+echo "Node admin metadata self-test passed: safe controls, vertical list metadata, one editor field per row, native spacing, Node Name input width, backend metadata, and reset schedule are present.\n";
