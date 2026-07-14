@@ -29,16 +29,20 @@ $replaceRegex = static function (string $content, string $pattern, string $repla
     return $patched;
 };
 
-// Symfony YAML's second argument is the inline depth. A value of 2 turns each
-// proxy object into a flow mapping such as "- { name: ..., type: ... }". Keep
-// nested proxy objects in normal block form and use conventional two-space YAML.
+// This serializer is shared by every ClashMeta proxy type. The previous inline
+// depth of 2 compressed every node into a JSON-like flow mapping. A very high
+// inline depth keeps VLESS, VMess, Trojan, Shadowsocks, Hysteria, Hysteria2,
+// TUIC, AnyTLS, SOCKS, HTTP, Mieru and all nested option maps/lists in normal
+// readable block YAML.
 $content = $replaceExact(
     $content,
     "        \$yaml = Yaml::dump(\$config, 2, 4, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);",
-    "        \$yaml = Yaml::dump(\$config, 10, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);",
-    'standard block YAML output'
+    "        \$yaml = Yaml::dump(\$config, 99, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);",
+    'all-protocol standard block YAML output'
 );
 
+// Keep Hysteria2 fields ordered and complete. This changes field content only;
+// block-style formatting for every protocol is controlled globally above.
 $method = <<<'PHP'
     public static function buildHysteria($password, $server, $user)
     {
@@ -65,8 +69,6 @@ $method = <<<'PHP'
                 $alpn = ['h3'];
             }
 
-            // Keep the key order intentionally aligned with the standard Mihomo
-            // Hysteria2 block format so generated subscriptions remain readable.
             $array = [
                 'name' => $name,
                 'type' => 'hysteria2',
@@ -169,4 +171,4 @@ if (file_put_contents($path, $content) === false) {
     exit(1);
 }
 
-echo "Patched ClashMeta: standard block YAML and ordered Hysteria2 fields.\n";
+echo "Patched ClashMeta: every protocol uses standard block YAML; Hysteria2 fields normalized.\n";
