@@ -1,85 +1,60 @@
-commit=51dfdae32c340bd8e6d0700920a47576e30e0071
-run_id=29313833526
-run_url=https://github.com/ckbkdj/Xboard/actions/runs/29313833526
+commit=3552c9c53e535b3a02e7fd33edb602f5776bf009
+run_id=29339729664
+run_url=https://github.com/ckbkdj/Xboard/actions/runs/29339729664
 
-#7 [2/8] COPY app /tmp/custom-src/app
-#7 DONE 1.0s
-
-#8 [3/8] COPY database /tmp/custom-src/database
-#8 DONE 0.0s
-
-#9 [4/8] COPY resources /tmp/custom-src/resources
-#9 DONE 0.0s
-
-#10 [5/8] COPY public/assets/custom /tmp/custom-src/public/assets/custom
-#10 DONE 0.0s
-
-#11 [6/8] COPY scripts /tmp/custom-src/scripts
-#11 DONE 0.0s
-
-#12 [7/8] COPY .docker /tmp/custom-src/.docker
-#12 DONE 0.0s
-
-#13 [8/8] RUN set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src
-#13 0.051 + php /tmp/custom-src/scripts/patch-carrier-preferred.php /tmp/custom-src/app/Support/AbstractProtocol.php
-#13 0.081 Patched carrier preferred entries: automatic VLESS transport detection; origin + Unicom + Mobile + Telecom; shared original transport settings.
-#13 0.087 + php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src
-#13 0.117 Patched administrator node metadata, monthly reset schedule, and admin UI.
-#13 0.121 + mkdir -p /www/app/Support /www/app/Services /www/app/Console/Commands /www/app/Http/Requests/Admin /www/app/Http/Controllers/V2/Admin/Server /www/app/Models /www/app/Console /www/database/migrations /www/resources/rules /www/resources/views /www/public/assets/custom
-#13 0.123 + cp /tmp/custom-src/app/Support/AbstractProtocol.php /www/app/Support/AbstractProtocol.php
-#13 0.125 + cp /tmp/custom-src/app/Services/ServerService.php /www/app/Services/ServerService.php
-#13 0.126 + cp /tmp/custom-src/app/Services/ServerTrafficResetService.php /www/app/Services/ServerTrafficResetService.php
-#13 0.127 + cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php /www/app/Console/Commands/ResetServerTraffic.php
-#13 0.128 + cp /tmp/custom-src/app/Models/Server.php /www/app/Models/Server.php
-#13 0.129 + cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php /www/app/Http/Requests/Admin/ServerSave.php
-#13 0.131 + cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php /www/app/Http/Controllers/V2/Admin/Server/ManageController.php
-#13 0.133 + cp /tmp/custom-src/app/Console/Kernel.php /www/app/Console/Kernel.php
-#13 0.133 + cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
-#13 0.135 + cp /tmp/custom-src/resources/rules/default.clash.yaml /www/resources/rules/default.clash.yaml
-#13 0.136 + cp /tmp/custom-src/resources/views/admin.blade.php /www/resources/views/admin.blade.php
-#13 0.137 + cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js /www/public/assets/custom/admin-node-metadata.js
-#13 0.138 + cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh
-#13 0.139 + chmod +x /entrypoint.sh
-#13 0.140 + php -l /www/app/Support/AbstractProtocol.php
-#13 0.166 No syntax errors detected in /www/app/Support/AbstractProtocol.php
-#13 0.171 + php -l /www/app/Services/ServerService.php
-#13 0.197 No syntax errors detected in /www/app/Services/ServerService.php
-#13 0.201 + php -l /www/app/Services/ServerTrafficResetService.php
-#13 0.226 No syntax errors detected in /www/app/Services/ServerTrafficResetService.php
-#13 0.230 + php -l /www/app/Console/Commands/ResetServerTraffic.php
-#13 0.255 No syntax errors detected in /www/app/Console/Commands/ResetServerTraffic.php
-#13 0.260 + php -l /www/app/Models/Server.php
-#13 0.285 No syntax errors detected in /www/app/Models/Server.php
-#13 0.290 + php -l /www/app/Http/Requests/Admin/ServerSave.php
-#13 0.314 No syntax errors detected in /www/app/Http/Requests/Admin/ServerSave.php
-#13 0.319 + php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php
-#13 0.344 No syntax errors detected in /www/app/Http/Controllers/V2/Admin/Server/ManageController.php
-#13 0.348 + php -l /www/app/Console/Kernel.php
-#13 0.373 No syntax errors detected in /www/app/Console/Kernel.php
-#13 0.377 + php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
-#13 0.403 No syntax errors detected in /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
-#13 0.408 + php /tmp/custom-src/scripts/test-carrier-preferred.php
-#13 0.454 Carrier expansion self-test passed: automatic gRPC/HTTPUpgrade expansion with shared transport settings.
-#13 0.459 + php /tmp/custom-src/scripts/test-node-admin-metadata.php
-#13 0.520 
-#13 0.520 Fatal error: Uncaught RuntimeException: Missing 'function cloneNativeField' in /www/public/assets/custom/admin-node-metadata.js in /tmp/custom-src/scripts/test-node-admin-metadata.php:13
-#13 0.520 Stack trace:
-#13 0.520 #0 /tmp/custom-src/scripts/test-node-admin-metadata.php(94): {closure}(false, 'Missing 'functi...')
-#13 0.520 #1 {main}
-#13 0.520   thrown in /tmp/custom-src/scripts/test-node-admin-metadata.php on line 13
-#13 ERROR: process "/bin/sh -c set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src" did not complete successfully: exit code: 255
+#13 0.208 + cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php /www/app/Console/Commands/ResetServerTraffic.php
+#13 0.209 + cp /tmp/custom-src/app/Models/Server.php /www/app/Models/Server.php
+#13 0.210 + cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php /www/app/Http/Requests/Admin/ServerSave.php
+#13 0.212 + cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php /www/app/Http/Controllers/V2/Admin/Server/ManageController.php
+#13 0.214 + cp /tmp/custom-src/app/Console/Kernel.php /www/app/Console/Kernel.php
+#13 0.215 + cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
+#13 0.216 + cp /tmp/custom-src/resources/rules/default.clash.yaml /www/resources/rules/default.clash.yaml
+#13 0.217 + cp /tmp/custom-src/resources/views/admin.blade.php /www/resources/views/admin.blade.php
+#13 0.219 + cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js /www/public/assets/custom/admin-node-metadata.js
+#13 0.219 + cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh
+#13 0.220 + chmod +x /entrypoint.sh
+#13 0.221 + php -l /www/app/Support/AbstractProtocol.php
+#13 0.245 No syntax errors detected in /www/app/Support/AbstractProtocol.php
+#13 0.249 + php -l /www/app/Protocols/ClashMeta.php
+#13 0.273 No syntax errors detected in /www/app/Protocols/ClashMeta.php
+#13 0.277 + php -l /www/app/Services/ServerService.php
+#13 0.301 No syntax errors detected in /www/app/Services/ServerService.php
+#13 0.305 + php -l /www/app/Services/ServerTrafficResetService.php
+#13 0.328 No syntax errors detected in /www/app/Services/ServerTrafficResetService.php
+#13 0.333 + php -l /www/app/Console/Commands/ResetServerTraffic.php
+#13 0.356 No syntax errors detected in /www/app/Console/Commands/ResetServerTraffic.php
+#13 0.360 + php -l /www/app/Models/Server.php
+#13 0.384 No syntax errors detected in /www/app/Models/Server.php
+#13 0.388 + php -l /www/app/Http/Requests/Admin/ServerSave.php
+#13 0.411 No syntax errors detected in /www/app/Http/Requests/Admin/ServerSave.php
+#13 0.415 + php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php
+#13 0.439 No syntax errors detected in /www/app/Http/Controllers/V2/Admin/Server/ManageController.php
+#13 0.443 + php -l /www/app/Console/Kernel.php
+#13 0.466 No syntax errors detected in /www/app/Console/Kernel.php
+#13 0.470 + php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
+#13 0.493 No syntax errors detected in /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
+#13 0.497 + php /tmp/custom-src/scripts/test-carrier-preferred.php
+#13 0.538 Carrier expansion self-test passed: automatic gRPC/HTTPUpgrade expansion with shared transport settings.
+#13 0.543 + php /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php
+#13 0.585 
+#13 0.585 Fatal error: Uncaught RuntimeException: Missing block-style proxy list item in /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php:12
+#13 0.585 Stack trace:
+#13 0.585 #0 /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php(44): {closure}(false, 'Missing block-s...')
+#13 0.585 #1 {main}
+#13 0.585   thrown in /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php on line 12
+#13 ERROR: process "/bin/sh -c set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-clashmeta-standard-yaml.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-safe-interaction.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-layout.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Protocols         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Protocols/ClashMeta.php         /www/app/Protocols/ClashMeta.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Protocols/ClashMeta.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src" did not complete successfully: exit code: 255
 ------
- > [8/8] RUN set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src:
-0.403 No syntax errors detected in /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
-0.408 + php /tmp/custom-src/scripts/test-carrier-preferred.php
-0.454 Carrier expansion self-test passed: automatic gRPC/HTTPUpgrade expansion with shared transport settings.
-0.459 + php /tmp/custom-src/scripts/test-node-admin-metadata.php
-0.520 
-0.520 Fatal error: Uncaught RuntimeException: Missing 'function cloneNativeField' in /www/public/assets/custom/admin-node-metadata.js in /tmp/custom-src/scripts/test-node-admin-metadata.php:13
-0.520 Stack trace:
-0.520 #0 /tmp/custom-src/scripts/test-node-admin-metadata.php(94): {closure}(false, 'Missing 'functi...')
-0.520 #1 {main}
-0.520   thrown in /tmp/custom-src/scripts/test-node-admin-metadata.php on line 13
+ > [8/8] RUN set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-clashmeta-standard-yaml.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-safe-interaction.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-layout.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Protocols         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Protocols/ClashMeta.php         /www/app/Protocols/ClashMeta.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Protocols/ClashMeta.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src:
+0.493 No syntax errors detected in /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
+0.497 + php /tmp/custom-src/scripts/test-carrier-preferred.php
+0.538 Carrier expansion self-test passed: automatic gRPC/HTTPUpgrade expansion with shared transport settings.
+0.543 + php /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php
+0.585 
+0.585 Fatal error: Uncaught RuntimeException: Missing block-style proxy list item in /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php:12
+0.585 Stack trace:
+0.585 #0 /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php(44): {closure}(false, 'Missing block-s...')
+0.585 #1 {main}
+0.585   thrown in /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php on line 12
 ------
 Dockerfile.custom:13
 --------------------
@@ -87,69 +62,77 @@ Dockerfile.custom:13
   13 | >>> RUN set -eux; \
   14 | >>>     php /tmp/custom-src/scripts/patch-carrier-preferred.php \
   15 | >>>         /tmp/custom-src/app/Support/AbstractProtocol.php; \
-  16 | >>>     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src; \
-  17 | >>>     mkdir -p \
-  18 | >>>         /www/app/Support \
-  19 | >>>         /www/app/Services \
-  20 | >>>         /www/app/Console/Commands \
-  21 | >>>         /www/app/Http/Requests/Admin \
-  22 | >>>         /www/app/Http/Controllers/V2/Admin/Server \
-  23 | >>>         /www/app/Models \
-  24 | >>>         /www/app/Console \
-  25 | >>>         /www/database/migrations \
-  26 | >>>         /www/resources/rules \
-  27 | >>>         /www/resources/views \
-  28 | >>>         /www/public/assets/custom; \
-  29 | >>>     cp /tmp/custom-src/app/Support/AbstractProtocol.php \
-  30 | >>>         /www/app/Support/AbstractProtocol.php; \
-  31 | >>>     cp /tmp/custom-src/app/Services/ServerService.php \
-  32 | >>>         /www/app/Services/ServerService.php; \
-  33 | >>>     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php \
-  34 | >>>         /www/app/Services/ServerTrafficResetService.php; \
-  35 | >>>     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php \
-  36 | >>>         /www/app/Console/Commands/ResetServerTraffic.php; \
-  37 | >>>     cp /tmp/custom-src/app/Models/Server.php \
-  38 | >>>         /www/app/Models/Server.php; \
-  39 | >>>     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php \
-  40 | >>>         /www/app/Http/Requests/Admin/ServerSave.php; \
-  41 | >>>     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php \
-  42 | >>>         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php; \
-  43 | >>>     cp /tmp/custom-src/app/Console/Kernel.php \
-  44 | >>>         /www/app/Console/Kernel.php; \
-  45 | >>>     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php \
-  46 | >>>         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php; \
-  47 | >>>     cp /tmp/custom-src/resources/rules/default.clash.yaml \
-  48 | >>>         /www/resources/rules/default.clash.yaml; \
-  49 | >>>     cp /tmp/custom-src/resources/views/admin.blade.php \
-  50 | >>>         /www/resources/views/admin.blade.php; \
-  51 | >>>     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js \
-  52 | >>>         /www/public/assets/custom/admin-node-metadata.js; \
-  53 | >>>     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh; \
-  54 | >>>     chmod +x /entrypoint.sh; \
-  55 | >>>     php -l /www/app/Support/AbstractProtocol.php; \
-  56 | >>>     php -l /www/app/Services/ServerService.php; \
-  57 | >>>     php -l /www/app/Services/ServerTrafficResetService.php; \
-  58 | >>>     php -l /www/app/Console/Commands/ResetServerTraffic.php; \
-  59 | >>>     php -l /www/app/Models/Server.php; \
-  60 | >>>     php -l /www/app/Http/Requests/Admin/ServerSave.php; \
-  61 | >>>     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php; \
-  62 | >>>     php -l /www/app/Console/Kernel.php; \
-  63 | >>>     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php; \
-  64 | >>>     php /tmp/custom-src/scripts/test-carrier-preferred.php; \
-  65 | >>>     php /tmp/custom-src/scripts/test-node-admin-metadata.php; \
-  66 | >>>     rm -rf /tmp/custom-src
-  67 |     
+  16 | >>>     php /tmp/custom-src/scripts/patch-clashmeta-standard-yaml.php /tmp/custom-src; \
+  17 | >>>     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src; \
+  18 | >>>     php /tmp/custom-src/scripts/patch-node-admin-safe-interaction.php /tmp/custom-src; \
+  19 | >>>     php /tmp/custom-src/scripts/patch-node-admin-layout.php /tmp/custom-src; \
+  20 | >>>     mkdir -p \
+  21 | >>>         /www/app/Support \
+  22 | >>>         /www/app/Protocols \
+  23 | >>>         /www/app/Services \
+  24 | >>>         /www/app/Console/Commands \
+  25 | >>>         /www/app/Http/Requests/Admin \
+  26 | >>>         /www/app/Http/Controllers/V2/Admin/Server \
+  27 | >>>         /www/app/Models \
+  28 | >>>         /www/app/Console \
+  29 | >>>         /www/database/migrations \
+  30 | >>>         /www/resources/rules \
+  31 | >>>         /www/resources/views \
+  32 | >>>         /www/public/assets/custom; \
+  33 | >>>     cp /tmp/custom-src/app/Support/AbstractProtocol.php \
+  34 | >>>         /www/app/Support/AbstractProtocol.php; \
+  35 | >>>     cp /tmp/custom-src/app/Protocols/ClashMeta.php \
+  36 | >>>         /www/app/Protocols/ClashMeta.php; \
+  37 | >>>     cp /tmp/custom-src/app/Services/ServerService.php \
+  38 | >>>         /www/app/Services/ServerService.php; \
+  39 | >>>     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php \
+  40 | >>>         /www/app/Services/ServerTrafficResetService.php; \
+  41 | >>>     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php \
+  42 | >>>         /www/app/Console/Commands/ResetServerTraffic.php; \
+  43 | >>>     cp /tmp/custom-src/app/Models/Server.php \
+  44 | >>>         /www/app/Models/Server.php; \
+  45 | >>>     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php \
+  46 | >>>         /www/app/Http/Requests/Admin/ServerSave.php; \
+  47 | >>>     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php \
+  48 | >>>         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php; \
+  49 | >>>     cp /tmp/custom-src/app/Console/Kernel.php \
+  50 | >>>         /www/app/Console/Kernel.php; \
+  51 | >>>     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php \
+  52 | >>>         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php; \
+  53 | >>>     cp /tmp/custom-src/resources/rules/default.clash.yaml \
+  54 | >>>         /www/resources/rules/default.clash.yaml; \
+  55 | >>>     cp /tmp/custom-src/resources/views/admin.blade.php \
+  56 | >>>         /www/resources/views/admin.blade.php; \
+  57 | >>>     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js \
+  58 | >>>         /www/public/assets/custom/admin-node-metadata.js; \
+  59 | >>>     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh; \
+  60 | >>>     chmod +x /entrypoint.sh; \
+  61 | >>>     php -l /www/app/Support/AbstractProtocol.php; \
+  62 | >>>     php -l /www/app/Protocols/ClashMeta.php; \
+  63 | >>>     php -l /www/app/Services/ServerService.php; \
+  64 | >>>     php -l /www/app/Services/ServerTrafficResetService.php; \
+  65 | >>>     php -l /www/app/Console/Commands/ResetServerTraffic.php; \
+  66 | >>>     php -l /www/app/Models/Server.php; \
+  67 | >>>     php -l /www/app/Http/Requests/Admin/ServerSave.php; \
+  68 | >>>     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php; \
+  69 | >>>     php -l /www/app/Console/Kernel.php; \
+  70 | >>>     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php; \
+  71 | >>>     php /tmp/custom-src/scripts/test-carrier-preferred.php; \
+  72 | >>>     php /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php; \
+  73 | >>>     php /tmp/custom-src/scripts/test-node-admin-metadata.php; \
+  74 | >>>     rm -rf /tmp/custom-src
+  75 |     
 --------------------
-ERROR: failed to build: failed to solve: process "/bin/sh -c set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src" did not complete successfully: exit code: 255
+ERROR: failed to build: failed to solve: process "/bin/sh -c set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-clashmeta-standard-yaml.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-safe-interaction.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-layout.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Protocols         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Protocols/ClashMeta.php         /www/app/Protocols/ClashMeta.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Protocols/ClashMeta.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src" did not complete successfully: exit code: 255
 ===== Docker build attempt 2/2 =====
-#0 building with "builder-ee361231-c029-4a29-a21c-c120cd07e29c" instance using docker-container driver
+#0 building with "builder-b5b8a0d3-e764-4b41-9a4c-fb3aaa404767" instance using docker-container driver
 
 #1 [internal] load build definition from Dockerfile.custom
-#1 transferring dockerfile: 3.39kB done
+#1 transferring dockerfile: 3.88kB done
 #1 DONE 0.0s
 
 #2 [internal] load metadata for ghcr.io/cedar2025/xboard:latest
-#2 DONE 0.0s
+#2 DONE 0.2s
 
 #3 [internal] load .dockerignore
 #3 transferring context: 423B done
@@ -160,13 +143,13 @@ ERROR: failed to build: failed to solve: process "/bin/sh -c set -eux;     php /
 #4 DONE 0.0s
 
 #5 [internal] load build context
-#5 transferring context: 23.40kB 0.0s done
+#5 transferring context: 23.64kB 0.0s done
 #5 DONE 0.0s
 
 #6 [3/8] COPY database /tmp/custom-src/database
 #6 CACHED
 
-#7 [6/8] COPY scripts /tmp/custom-src/scripts
+#7 [5/8] COPY public/assets/custom /tmp/custom-src/public/assets/custom
 #7 CACHED
 
 #8 [2/8] COPY app /tmp/custom-src/app
@@ -175,72 +158,81 @@ ERROR: failed to build: failed to solve: process "/bin/sh -c set -eux;     php /
 #9 [4/8] COPY resources /tmp/custom-src/resources
 #9 CACHED
 
-#10 [5/8] COPY public/assets/custom /tmp/custom-src/public/assets/custom
+#10 [6/8] COPY scripts /tmp/custom-src/scripts
 #10 CACHED
 
 #11 [7/8] COPY .docker /tmp/custom-src/.docker
 #11 CACHED
 
-#12 [8/8] RUN set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src
-#12 0.046 + php /tmp/custom-src/scripts/patch-carrier-preferred.php /tmp/custom-src/app/Support/AbstractProtocol.php
-#12 0.077 Patched carrier preferred entries: automatic VLESS transport detection; origin + Unicom + Mobile + Telecom; shared original transport settings.
-#12 0.081 + php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src
-#12 0.112 Patched administrator node metadata, monthly reset schedule, and admin UI.
-#12 0.117 + mkdir -p /www/app/Support /www/app/Services /www/app/Console/Commands /www/app/Http/Requests/Admin /www/app/Http/Controllers/V2/Admin/Server /www/app/Models /www/app/Console /www/database/migrations /www/resources/rules /www/resources/views /www/public/assets/custom
-#12 0.119 + cp /tmp/custom-src/app/Support/AbstractProtocol.php /www/app/Support/AbstractProtocol.php
-#12 0.121 + cp /tmp/custom-src/app/Services/ServerService.php /www/app/Services/ServerService.php
-#12 0.122 + cp /tmp/custom-src/app/Services/ServerTrafficResetService.php /www/app/Services/ServerTrafficResetService.php
-#12 0.123 + cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php /www/app/Console/Commands/ResetServerTraffic.php
-#12 0.124 + cp /tmp/custom-src/app/Models/Server.php /www/app/Models/Server.php
-#12 0.125 + cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php /www/app/Http/Requests/Admin/ServerSave.php
-#12 0.126 + cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php /www/app/Http/Controllers/V2/Admin/Server/ManageController.php
-#12 0.128 + cp /tmp/custom-src/app/Console/Kernel.php /www/app/Console/Kernel.php
-#12 0.129 + cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
-#12 0.130 + cp /tmp/custom-src/resources/rules/default.clash.yaml /www/resources/rules/default.clash.yaml
-#12 0.132 + cp /tmp/custom-src/resources/views/admin.blade.php /www/resources/views/admin.blade.php
-#12 0.133 + cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js /www/public/assets/custom/admin-node-metadata.js
-#12 0.134 + cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh
-#12 0.134 + chmod +x /entrypoint.sh
-#12 0.135 + php -l /www/app/Support/AbstractProtocol.php
-#12 0.162 No syntax errors detected in /www/app/Support/AbstractProtocol.php
-#12 0.167 + php -l /www/app/Services/ServerService.php
-#12 0.193 No syntax errors detected in /www/app/Services/ServerService.php
-#12 0.197 + php -l /www/app/Services/ServerTrafficResetService.php
-#12 0.224 No syntax errors detected in /www/app/Services/ServerTrafficResetService.php
-#12 0.229 + php -l /www/app/Console/Commands/ResetServerTraffic.php
-#12 0.255 No syntax errors detected in /www/app/Console/Commands/ResetServerTraffic.php
-#12 0.259 + php -l /www/app/Models/Server.php
-#12 0.284 No syntax errors detected in /www/app/Models/Server.php
-#12 0.289 + php -l /www/app/Http/Requests/Admin/ServerSave.php
-#12 0.314 No syntax errors detected in /www/app/Http/Requests/Admin/ServerSave.php
-#12 0.319 + php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php
-#12 0.344 No syntax errors detected in /www/app/Http/Controllers/V2/Admin/Server/ManageController.php
-#12 0.349 + php -l /www/app/Console/Kernel.php
-#12 0.374 No syntax errors detected in /www/app/Console/Kernel.php
-#12 0.379 + php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
-#12 0.404 No syntax errors detected in /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
-#12 0.409 + php /tmp/custom-src/scripts/test-carrier-preferred.php
-#12 0.452 Carrier expansion self-test passed: automatic gRPC/HTTPUpgrade expansion with shared transport settings.
-#12 0.457 + php /tmp/custom-src/scripts/test-node-admin-metadata.php
-#12 0.518 
-#12 0.518 Fatal error: Uncaught RuntimeException: Missing 'function cloneNativeField' in /www/public/assets/custom/admin-node-metadata.js in /tmp/custom-src/scripts/test-node-admin-metadata.php:13
-#12 0.518 Stack trace:
-#12 0.518 #0 /tmp/custom-src/scripts/test-node-admin-metadata.php(94): {closure}(false, 'Missing 'functi...')
-#12 0.518 #1 {main}
-#12 0.518   thrown in /tmp/custom-src/scripts/test-node-admin-metadata.php on line 13
-#12 ERROR: process "/bin/sh -c set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src" did not complete successfully: exit code: 255
+#12 [8/8] RUN set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-clashmeta-standard-yaml.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-safe-interaction.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-layout.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Protocols         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Protocols/ClashMeta.php         /www/app/Protocols/ClashMeta.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Protocols/ClashMeta.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src
+#12 0.041 + php /tmp/custom-src/scripts/patch-carrier-preferred.php /tmp/custom-src/app/Support/AbstractProtocol.php
+#12 0.070 Patched carrier preferred entries: automatic VLESS transport detection; origin + Unicom + Mobile + Telecom; shared original transport settings.
+#12 0.076 + php /tmp/custom-src/scripts/patch-clashmeta-standard-yaml.php /tmp/custom-src
+#12 0.100 Patched ClashMeta: standard block YAML and ordered Hysteria2 fields.
+#12 0.106 + php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src
+#12 0.135 Patched administrator node metadata, monthly reset schedule, and admin UI.
+#12 0.139 + php /tmp/custom-src/scripts/patch-node-admin-safe-interaction.php /tmp/custom-src
+#12 0.165 Hardened node admin interactions: independent reset select, no cloned native controls, no stacking overlay, and focus-safe placement.
+#12 0.169 + php /tmp/custom-src/scripts/patch-node-admin-layout.php /tmp/custom-src
+#12 0.194 Aligned node admin layout: vertical list metadata, one editor field per row, native spacing, and Node Name control width.
+#12 0.198 + mkdir -p /www/app/Support /www/app/Protocols /www/app/Services /www/app/Console/Commands /www/app/Http/Requests/Admin /www/app/Http/Controllers/V2/Admin/Server /www/app/Models /www/app/Console /www/database/migrations /www/resources/rules /www/resources/views /www/public/assets/custom
+#12 0.200 + cp /tmp/custom-src/app/Support/AbstractProtocol.php /www/app/Support/AbstractProtocol.php
+#12 0.202 + cp /tmp/custom-src/app/Protocols/ClashMeta.php /www/app/Protocols/ClashMeta.php
+#12 0.203 + cp /tmp/custom-src/app/Services/ServerService.php /www/app/Services/ServerService.php
+#12 0.204 + cp /tmp/custom-src/app/Services/ServerTrafficResetService.php /www/app/Services/ServerTrafficResetService.php
+#12 0.205 + cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php /www/app/Console/Commands/ResetServerTraffic.php
+#12 0.206 + cp /tmp/custom-src/app/Models/Server.php /www/app/Models/Server.php
+#12 0.207 + cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php /www/app/Http/Requests/Admin/ServerSave.php
+#12 0.209 + cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php /www/app/Http/Controllers/V2/Admin/Server/ManageController.php
+#12 0.211 + cp /tmp/custom-src/app/Console/Kernel.php /www/app/Console/Kernel.php
+#12 0.212 + cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
+#12 0.213 + cp /tmp/custom-src/resources/rules/default.clash.yaml /www/resources/rules/default.clash.yaml
+#12 0.214 + cp /tmp/custom-src/resources/views/admin.blade.php /www/resources/views/admin.blade.php
+#12 0.215 + cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js /www/public/assets/custom/admin-node-metadata.js
+#12 0.216 + cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh
+#12 0.217 + chmod +x /entrypoint.sh
+#12 0.218 + php -l /www/app/Support/AbstractProtocol.php
+#12 0.242 No syntax errors detected in /www/app/Support/AbstractProtocol.php
+#12 0.247 + php -l /www/app/Protocols/ClashMeta.php
+#12 0.271 No syntax errors detected in /www/app/Protocols/ClashMeta.php
+#12 0.276 + php -l /www/app/Services/ServerService.php
+#12 0.300 No syntax errors detected in /www/app/Services/ServerService.php
+#12 0.305 + php -l /www/app/Services/ServerTrafficResetService.php
+#12 0.329 No syntax errors detected in /www/app/Services/ServerTrafficResetService.php
+#12 0.333 + php -l /www/app/Console/Commands/ResetServerTraffic.php
+#12 0.356 No syntax errors detected in /www/app/Console/Commands/ResetServerTraffic.php
+#12 0.360 + php -l /www/app/Models/Server.php
+#12 0.384 No syntax errors detected in /www/app/Models/Server.php
+#12 0.389 + php -l /www/app/Http/Requests/Admin/ServerSave.php
+#12 0.413 No syntax errors detected in /www/app/Http/Requests/Admin/ServerSave.php
+#12 0.417 + php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php
+#12 0.441 No syntax errors detected in /www/app/Http/Controllers/V2/Admin/Server/ManageController.php
+#12 0.445 + php -l /www/app/Console/Kernel.php
+#12 0.468 No syntax errors detected in /www/app/Console/Kernel.php
+#12 0.472 + php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
+#12 0.496 No syntax errors detected in /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
+#12 0.500 + php /tmp/custom-src/scripts/test-carrier-preferred.php
+#12 0.542 Carrier expansion self-test passed: automatic gRPC/HTTPUpgrade expansion with shared transport settings.
+#12 0.546 + php /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php
+#12 0.588 
+#12 0.588 Fatal error: Uncaught RuntimeException: Missing block-style proxy list item in /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php:12
+#12 0.588 Stack trace:
+#12 0.588 #0 /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php(44): {closure}(false, 'Missing block-s...')
+#12 0.588 #1 {main}
+#12 0.588   thrown in /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php on line 12
+#12 ERROR: process "/bin/sh -c set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-clashmeta-standard-yaml.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-safe-interaction.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-layout.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Protocols         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Protocols/ClashMeta.php         /www/app/Protocols/ClashMeta.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Protocols/ClashMeta.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src" did not complete successfully: exit code: 255
 ------
- > [8/8] RUN set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src:
-0.404 No syntax errors detected in /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
-0.409 + php /tmp/custom-src/scripts/test-carrier-preferred.php
-0.452 Carrier expansion self-test passed: automatic gRPC/HTTPUpgrade expansion with shared transport settings.
-0.457 + php /tmp/custom-src/scripts/test-node-admin-metadata.php
-0.518 
-0.518 Fatal error: Uncaught RuntimeException: Missing 'function cloneNativeField' in /www/public/assets/custom/admin-node-metadata.js in /tmp/custom-src/scripts/test-node-admin-metadata.php:13
-0.518 Stack trace:
-0.518 #0 /tmp/custom-src/scripts/test-node-admin-metadata.php(94): {closure}(false, 'Missing 'functi...')
-0.518 #1 {main}
-0.518   thrown in /tmp/custom-src/scripts/test-node-admin-metadata.php on line 13
+ > [8/8] RUN set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-clashmeta-standard-yaml.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-safe-interaction.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-layout.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Protocols         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Protocols/ClashMeta.php         /www/app/Protocols/ClashMeta.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Protocols/ClashMeta.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src:
+0.496 No syntax errors detected in /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php
+0.500 + php /tmp/custom-src/scripts/test-carrier-preferred.php
+0.542 Carrier expansion self-test passed: automatic gRPC/HTTPUpgrade expansion with shared transport settings.
+0.546 + php /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php
+0.588 
+0.588 Fatal error: Uncaught RuntimeException: Missing block-style proxy list item in /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php:12
+0.588 Stack trace:
+0.588 #0 /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php(44): {closure}(false, 'Missing block-s...')
+0.588 #1 {main}
+0.588   thrown in /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php on line 12
 ------
 Dockerfile.custom:13
 --------------------
@@ -248,57 +240,65 @@ Dockerfile.custom:13
   13 | >>> RUN set -eux; \
   14 | >>>     php /tmp/custom-src/scripts/patch-carrier-preferred.php \
   15 | >>>         /tmp/custom-src/app/Support/AbstractProtocol.php; \
-  16 | >>>     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src; \
-  17 | >>>     mkdir -p \
-  18 | >>>         /www/app/Support \
-  19 | >>>         /www/app/Services \
-  20 | >>>         /www/app/Console/Commands \
-  21 | >>>         /www/app/Http/Requests/Admin \
-  22 | >>>         /www/app/Http/Controllers/V2/Admin/Server \
-  23 | >>>         /www/app/Models \
-  24 | >>>         /www/app/Console \
-  25 | >>>         /www/database/migrations \
-  26 | >>>         /www/resources/rules \
-  27 | >>>         /www/resources/views \
-  28 | >>>         /www/public/assets/custom; \
-  29 | >>>     cp /tmp/custom-src/app/Support/AbstractProtocol.php \
-  30 | >>>         /www/app/Support/AbstractProtocol.php; \
-  31 | >>>     cp /tmp/custom-src/app/Services/ServerService.php \
-  32 | >>>         /www/app/Services/ServerService.php; \
-  33 | >>>     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php \
-  34 | >>>         /www/app/Services/ServerTrafficResetService.php; \
-  35 | >>>     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php \
-  36 | >>>         /www/app/Console/Commands/ResetServerTraffic.php; \
-  37 | >>>     cp /tmp/custom-src/app/Models/Server.php \
-  38 | >>>         /www/app/Models/Server.php; \
-  39 | >>>     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php \
-  40 | >>>         /www/app/Http/Requests/Admin/ServerSave.php; \
-  41 | >>>     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php \
-  42 | >>>         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php; \
-  43 | >>>     cp /tmp/custom-src/app/Console/Kernel.php \
-  44 | >>>         /www/app/Console/Kernel.php; \
-  45 | >>>     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php \
-  46 | >>>         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php; \
-  47 | >>>     cp /tmp/custom-src/resources/rules/default.clash.yaml \
-  48 | >>>         /www/resources/rules/default.clash.yaml; \
-  49 | >>>     cp /tmp/custom-src/resources/views/admin.blade.php \
-  50 | >>>         /www/resources/views/admin.blade.php; \
-  51 | >>>     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js \
-  52 | >>>         /www/public/assets/custom/admin-node-metadata.js; \
-  53 | >>>     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh; \
-  54 | >>>     chmod +x /entrypoint.sh; \
-  55 | >>>     php -l /www/app/Support/AbstractProtocol.php; \
-  56 | >>>     php -l /www/app/Services/ServerService.php; \
-  57 | >>>     php -l /www/app/Services/ServerTrafficResetService.php; \
-  58 | >>>     php -l /www/app/Console/Commands/ResetServerTraffic.php; \
-  59 | >>>     php -l /www/app/Models/Server.php; \
-  60 | >>>     php -l /www/app/Http/Requests/Admin/ServerSave.php; \
-  61 | >>>     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php; \
-  62 | >>>     php -l /www/app/Console/Kernel.php; \
-  63 | >>>     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php; \
-  64 | >>>     php /tmp/custom-src/scripts/test-carrier-preferred.php; \
-  65 | >>>     php /tmp/custom-src/scripts/test-node-admin-metadata.php; \
-  66 | >>>     rm -rf /tmp/custom-src
-  67 |     
+  16 | >>>     php /tmp/custom-src/scripts/patch-clashmeta-standard-yaml.php /tmp/custom-src; \
+  17 | >>>     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src; \
+  18 | >>>     php /tmp/custom-src/scripts/patch-node-admin-safe-interaction.php /tmp/custom-src; \
+  19 | >>>     php /tmp/custom-src/scripts/patch-node-admin-layout.php /tmp/custom-src; \
+  20 | >>>     mkdir -p \
+  21 | >>>         /www/app/Support \
+  22 | >>>         /www/app/Protocols \
+  23 | >>>         /www/app/Services \
+  24 | >>>         /www/app/Console/Commands \
+  25 | >>>         /www/app/Http/Requests/Admin \
+  26 | >>>         /www/app/Http/Controllers/V2/Admin/Server \
+  27 | >>>         /www/app/Models \
+  28 | >>>         /www/app/Console \
+  29 | >>>         /www/database/migrations \
+  30 | >>>         /www/resources/rules \
+  31 | >>>         /www/resources/views \
+  32 | >>>         /www/public/assets/custom; \
+  33 | >>>     cp /tmp/custom-src/app/Support/AbstractProtocol.php \
+  34 | >>>         /www/app/Support/AbstractProtocol.php; \
+  35 | >>>     cp /tmp/custom-src/app/Protocols/ClashMeta.php \
+  36 | >>>         /www/app/Protocols/ClashMeta.php; \
+  37 | >>>     cp /tmp/custom-src/app/Services/ServerService.php \
+  38 | >>>         /www/app/Services/ServerService.php; \
+  39 | >>>     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php \
+  40 | >>>         /www/app/Services/ServerTrafficResetService.php; \
+  41 | >>>     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php \
+  42 | >>>         /www/app/Console/Commands/ResetServerTraffic.php; \
+  43 | >>>     cp /tmp/custom-src/app/Models/Server.php \
+  44 | >>>         /www/app/Models/Server.php; \
+  45 | >>>     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php \
+  46 | >>>         /www/app/Http/Requests/Admin/ServerSave.php; \
+  47 | >>>     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php \
+  48 | >>>         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php; \
+  49 | >>>     cp /tmp/custom-src/app/Console/Kernel.php \
+  50 | >>>         /www/app/Console/Kernel.php; \
+  51 | >>>     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php \
+  52 | >>>         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php; \
+  53 | >>>     cp /tmp/custom-src/resources/rules/default.clash.yaml \
+  54 | >>>         /www/resources/rules/default.clash.yaml; \
+  55 | >>>     cp /tmp/custom-src/resources/views/admin.blade.php \
+  56 | >>>         /www/resources/views/admin.blade.php; \
+  57 | >>>     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js \
+  58 | >>>         /www/public/assets/custom/admin-node-metadata.js; \
+  59 | >>>     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh; \
+  60 | >>>     chmod +x /entrypoint.sh; \
+  61 | >>>     php -l /www/app/Support/AbstractProtocol.php; \
+  62 | >>>     php -l /www/app/Protocols/ClashMeta.php; \
+  63 | >>>     php -l /www/app/Services/ServerService.php; \
+  64 | >>>     php -l /www/app/Services/ServerTrafficResetService.php; \
+  65 | >>>     php -l /www/app/Console/Commands/ResetServerTraffic.php; \
+  66 | >>>     php -l /www/app/Models/Server.php; \
+  67 | >>>     php -l /www/app/Http/Requests/Admin/ServerSave.php; \
+  68 | >>>     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php; \
+  69 | >>>     php -l /www/app/Console/Kernel.php; \
+  70 | >>>     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php; \
+  71 | >>>     php /tmp/custom-src/scripts/test-carrier-preferred.php; \
+  72 | >>>     php /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php; \
+  73 | >>>     php /tmp/custom-src/scripts/test-node-admin-metadata.php; \
+  74 | >>>     rm -rf /tmp/custom-src
+  75 |     
 --------------------
-ERROR: failed to build: failed to solve: process "/bin/sh -c set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src" did not complete successfully: exit code: 255
+ERROR: failed to build: failed to solve: process "/bin/sh -c set -eux;     php /tmp/custom-src/scripts/patch-carrier-preferred.php         /tmp/custom-src/app/Support/AbstractProtocol.php;     php /tmp/custom-src/scripts/patch-clashmeta-standard-yaml.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-safe-interaction.php /tmp/custom-src;     php /tmp/custom-src/scripts/patch-node-admin-layout.php /tmp/custom-src;     mkdir -p         /www/app/Support         /www/app/Protocols         /www/app/Services         /www/app/Console/Commands         /www/app/Http/Requests/Admin         /www/app/Http/Controllers/V2/Admin/Server         /www/app/Models         /www/app/Console         /www/database/migrations         /www/resources/rules         /www/resources/views         /www/public/assets/custom;     cp /tmp/custom-src/app/Support/AbstractProtocol.php         /www/app/Support/AbstractProtocol.php;     cp /tmp/custom-src/app/Protocols/ClashMeta.php         /www/app/Protocols/ClashMeta.php;     cp /tmp/custom-src/app/Services/ServerService.php         /www/app/Services/ServerService.php;     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php         /www/app/Services/ServerTrafficResetService.php;     cp /tmp/custom-src/app/Console/Commands/ResetServerTraffic.php         /www/app/Console/Commands/ResetServerTraffic.php;     cp /tmp/custom-src/app/Models/Server.php         /www/app/Models/Server.php;     cp /tmp/custom-src/app/Http/Requests/Admin/ServerSave.php         /www/app/Http/Requests/Admin/ServerSave.php;     cp /tmp/custom-src/app/Http/Controllers/V2/Admin/Server/ManageController.php         /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     cp /tmp/custom-src/app/Console/Kernel.php         /www/app/Console/Kernel.php;     cp /tmp/custom-src/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php         /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     cp /tmp/custom-src/resources/rules/default.clash.yaml         /www/resources/rules/default.clash.yaml;     cp /tmp/custom-src/resources/views/admin.blade.php         /www/resources/views/admin.blade.php;     cp /tmp/custom-src/public/assets/custom/admin-node-metadata.js         /www/public/assets/custom/admin-node-metadata.js;     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh;     chmod +x /entrypoint.sh;     php -l /www/app/Support/AbstractProtocol.php;     php -l /www/app/Protocols/ClashMeta.php;     php -l /www/app/Services/ServerService.php;     php -l /www/app/Services/ServerTrafficResetService.php;     php -l /www/app/Console/Commands/ResetServerTraffic.php;     php -l /www/app/Models/Server.php;     php -l /www/app/Http/Requests/Admin/ServerSave.php;     php -l /www/app/Http/Controllers/V2/Admin/Server/ManageController.php;     php -l /www/app/Console/Kernel.php;     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php;     php /tmp/custom-src/scripts/test-carrier-preferred.php;     php /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php;     php /tmp/custom-src/scripts/test-node-admin-metadata.php;     rm -rf /tmp/custom-src" did not complete successfully: exit code: 255
