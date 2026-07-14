@@ -70,14 +70,13 @@ $checks = [
         'traffic_reset_day',
         'isManagedUrl(url, "save")',
         'isManagedUrl(url, "getNodes")',
-        'function cloneNativeField',
-        'copy.trafficLimitLabels',
-        'copy.hostLabels',
-        'parent.insertBefore(resetField, tagField)',
-        'parent.insertBefore(remarkField, tagField)',
-        'titleRow.insertAdjacentElement("afterend", meta)',
+        'function createSafeField',
+        'function copyComputedControlStyle',
+        'tagField.parentElement.insertBefore(section, tagField)',
+        'column.append(meta)',
         'order: 2147483647 !important',
-        'xboard-node-admin-row-remark',
+        'pointer-events: auto !important',
+        'Do not interfere with unusual Request bodies',
     ],
     '/www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php' => [
         'traffic_reset_day',
@@ -95,4 +94,4 @@ foreach ($checks as $path => $needles) {
     }
 }
 
-echo "Node admin metadata self-test passed: native traffic-control reset field, native address remark field, stable node-row placement, backend metadata, and schedule are present.\n";
+echo "Node admin metadata self-test passed: safe independent controls, stable list placement, backend metadata, and reset schedule are present.\n";
