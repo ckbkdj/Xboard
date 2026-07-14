@@ -13,11 +13,13 @@ COPY .docker /tmp/custom-src/.docker
 RUN set -eux; \
     php /tmp/custom-src/scripts/patch-carrier-preferred.php \
         /tmp/custom-src/app/Support/AbstractProtocol.php; \
+    php /tmp/custom-src/scripts/patch-clashmeta-standard-yaml.php /tmp/custom-src; \
     php /tmp/custom-src/scripts/patch-node-admin-metadata.php /tmp/custom-src; \
     php /tmp/custom-src/scripts/patch-node-admin-safe-interaction.php /tmp/custom-src; \
     php /tmp/custom-src/scripts/patch-node-admin-layout.php /tmp/custom-src; \
     mkdir -p \
         /www/app/Support \
+        /www/app/Protocols \
         /www/app/Services \
         /www/app/Console/Commands \
         /www/app/Http/Requests/Admin \
@@ -30,6 +32,8 @@ RUN set -eux; \
         /www/public/assets/custom; \
     cp /tmp/custom-src/app/Support/AbstractProtocol.php \
         /www/app/Support/AbstractProtocol.php; \
+    cp /tmp/custom-src/app/Protocols/ClashMeta.php \
+        /www/app/Protocols/ClashMeta.php; \
     cp /tmp/custom-src/app/Services/ServerService.php \
         /www/app/Services/ServerService.php; \
     cp /tmp/custom-src/app/Services/ServerTrafficResetService.php \
@@ -55,6 +59,7 @@ RUN set -eux; \
     cp /tmp/custom-src/.docker/entrypoint.sh /entrypoint.sh; \
     chmod +x /entrypoint.sh; \
     php -l /www/app/Support/AbstractProtocol.php; \
+    php -l /www/app/Protocols/ClashMeta.php; \
     php -l /www/app/Services/ServerService.php; \
     php -l /www/app/Services/ServerTrafficResetService.php; \
     php -l /www/app/Console/Commands/ResetServerTraffic.php; \
@@ -64,5 +69,6 @@ RUN set -eux; \
     php -l /www/app/Console/Kernel.php; \
     php -l /www/database/migrations/2026_07_14_000001_add_admin_metadata_to_servers.php; \
     php /tmp/custom-src/scripts/test-carrier-preferred.php; \
+    php /tmp/custom-src/scripts/test-clashmeta-standard-yaml.php; \
     php /tmp/custom-src/scripts/test-node-admin-metadata.php; \
     rm -rf /tmp/custom-src
