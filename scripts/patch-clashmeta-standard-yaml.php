@@ -33,11 +33,22 @@ $replaceRegex = static function (string $content, string $pattern, string $repla
 // depth of 2 compressed every node into a JSON-like flow mapping. A very high
 // inline depth keeps VLESS, VMess, Trojan, Shadowsocks, Hysteria, Hysteria2,
 // TUIC, AnyTLS, SOCKS, HTTP, Mieru and all nested option maps/lists in normal
-// readable block YAML.
+// readable block YAML. Symfony emits mapping sequence items as a dash-only line;
+// the final normalization folds only the first mapping key onto that dash so all
+// node entries use the conventional "- name:" style requested by the client.
+$yamlOutput = <<<'PHP'
+        $yaml = Yaml::dump($config, 99, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);
+        $yaml = preg_replace(
+            '/^([ ]*)-\n\1  ([^ \-\n][^:\n]*:[^\n]*)$/m',
+            '$1- $2',
+            $yaml
+        ) ?? $yaml;
+PHP;
+
 $content = $replaceExact(
     $content,
     "        \$yaml = Yaml::dump(\$config, 2, 4, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);",
-    "        \$yaml = Yaml::dump(\$config, 99, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);",
+    $yamlOutput,
     'all-protocol standard block YAML output'
 );
 
@@ -171,4 +182,4 @@ if (file_put_contents($path, $content) === false) {
     exit(1);
 }
 
-echo "Patched ClashMeta: every protocol uses standard block YAML; Hysteria2 fields normalized.\n";
+echo "Patched ClashMeta: every protocol uses standard '- name:' block YAML; Hysteria2 fields normalized.\n";
