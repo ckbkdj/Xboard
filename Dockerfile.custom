@@ -8,7 +8,7 @@ RUN php -r 'if (PHP_VERSION_ID < 80235 || PHP_VERSION_ID >= 80300) { fwrite(STDE
 
 # Patch the checked-out branch sources in a temporary directory, then overlay the
 # resulting files onto the official image. This avoids depending on the exact
-# source revision bundled inside ghcr.io/cedar2025/xboard:latest.
+# source revision bundled inside the patched Xboard master image.
 COPY app /tmp/custom-src/app
 COPY database /tmp/custom-src/database
 COPY resources /tmp/custom-src/resources
