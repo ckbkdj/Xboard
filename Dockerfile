@@ -1,5 +1,10 @@
 FROM phpswoole/swoole:php8.2-alpine
 
+# CVE-2026-109618 / CVE-2026-109619: reject unpatched PHP images.
+# This floating upstream tag is only safe when the actual PHP runtime is >= 8.2.35.
+# Fail the image build rather than shipping an outdated PHP executable.
+RUN php -r 'if (PHP_VERSION_ID < 80235 || PHP_VERSION_ID >= 80300) { fwrite(STDERR, "ERROR: PHP 8.2.35+ required for the October 2026 security fixes; found " . PHP_VERSION . "\\n"); exit(1); } echo "Verified PHP " . PHP_VERSION . "\\n";'
+
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
 # Install PHP extensions one by one with lower optimization level for ARM64 compatibility
@@ -7,6 +12,7 @@ RUN CFLAGS="-O0" install-php-extensions pcntl && \
     CFLAGS="-O0 -g0" install-php-extensions bcmath && \
     install-php-extensions zip && \
     install-php-extensions redis && \
+    php -r 'foreach (["swoole", "redis", "pcntl", "bcmath", "zip"] as $ext) { if (!extension_loaded($ext)) { fwrite(STDERR, "Missing PHP extension: $ext\\n"); exit(1); } }' && \
     apk --no-cache add shadow sqlite mysql-client mysql-dev mariadb-connector-c git patch supervisor redis caddy && \
     addgroup -S -g 1000 www && adduser -S -G www -u 1000 www && \
     (getent group redis || addgroup -S redis) && \
